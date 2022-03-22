@@ -24,9 +24,9 @@ Copyright © 2021 Ennio Marke
     <h1 id="heading">USA Blog</h1>
   </div>
   <div id="searchWrapper">
-    <label for="search"><strong>Search Posts</strong></label>
+    <label for="search"><strong style="font-size: 1.25rem;">Search</strong></label>
     <br>
-    <input type="search" id="search">
+    <input type="search" id="search" data-search>
   </div>
   <div id="tagWrapper">
     <input type="checkbox" id="tagLorem" value="Lorem" class="tag">
@@ -40,21 +40,24 @@ Copyright © 2021 Ennio Marke
       <div class="tag-count">2</div>
     </label>
   </div>
-  <div id="posts">
+  <template data-post-template>
     <div class="post">
-      <h1 class="postHeading">Lorem Ipsum</h1>
-      <p class="postDate">August 15, 2022</p>
-      <div class="postTags">
-        <div class="postTag">Lorem</div>
+      <h1 class="postHeading" data-heading></h1>
+      <p class="postDate" data-date></p>
+      <div class="postTags" data-tags>
       </div>
-      <div class="postPreview">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam soluta possimus alias
-        eligendi sit corrupti quasi aliquam itaque, qui commodi!</div>
-      <a class="postMore" href="https://mystaredia.de/posts/">Read More</a>
+      <div class="postPreview" data-preview></div>
+      <a class="postMore" href="https://mystaredia.de/posts/">Read more</a>
     </div>
+  </template>
+  <div id="posts">
+
   </div>
 </body>
 
 </html>
+
+
 <!--                                       
        :\     /;               _
       ;  \___/  ;             ; ;
