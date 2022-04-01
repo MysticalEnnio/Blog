@@ -28,26 +28,24 @@ Copyright © 2021 Ennio Marke
     <br>
     <input type="search" id="search" data-search>
   </div>
-  <div id="tagWrapper">
-    <input type="checkbox" id="tagLorem" value="Lorem" class="tag">
-    <label for="Lorem" class="tag-label">
+  <div id="tagsWrapper">
+    <div class="tag">
       <span class="tag-name">Lorem</span>
       <div class="tag-count">1</div>
-    </label>
-    <input type="checkbox" id="tagIpsum" value="Ipsum" class="tag">
-    <label for="Ipsum" class="tag-label">
+    </div>
+    <div class="tag">
       <span class="tag-name">Ipsum</span>
       <div class="tag-count">2</div>
-    </label>
+    </div>
   </div>
   <template data-post-template>
     <div class="post">
-      <h1 class="postHeading" data-heading></h1>
+      <h1 class="postHeading" data-heading><a href="https://blog.mystaredia.de/"></a></h1>
       <p class="postDate" data-date></p>
       <div class="postTags" data-tags>
       </div>
       <div class="postPreview" data-preview></div>
-      <a class="postMore" href="https://mystaredia.de/posts/">Read more</a>
+      <a class="postMore" href="https://blog.mystaredia.de/posts/" data-more>Read more</a>
     </div>
   </template>
   <div id="posts">

@@ -43,7 +43,6 @@ This color should be eye-catching but not harsh. It can be liberally applied to 
 
 * {
   margin: 0;
-  padding: 0;
   box-sizing: border-box;
   font-family: "IBM Plex Sans",
     "-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji";
@@ -101,17 +100,11 @@ body {
   width: fit-content;
 }
 
-#tagWrapper {
+#tagsWrapper {
   height: 5vh;
 }
 
 .tag {
-  opacity: 0;
-  position: absolute;
-  left: -99999px;
-}
-
-.tag-label {
   height: 2rem;
   width: 5rem;
   display: flex;

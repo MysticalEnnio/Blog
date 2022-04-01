@@ -10,14 +10,14 @@ Copyright © 2021 Ennio Marke
 
 const userLang = navigator.language || navigator.userLanguage;
 
-document.addEventListener("DOMContentLoaded", () => {
+$(document).ready(() => {
   const postTemplate = document.querySelector("[data-post-template]");
-  const postsContainer = document.getElementById("posts");
-  const searchInput = document.getElementById("search");
+  const postsContainer = $("#posts");
+  const searchInput = $("#search");
 
   let postsData = [];
 
-  searchInput.addEventListener("input", (e) => {
+  searchInput.on("input propertychange", (e) => {
     const value = e.target.value.toLowerCase();
     postsData.forEach((post) => {
       const isVisible =
@@ -27,13 +27,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  $.get("json/posts.json", (posts) => {
-    console.log(posts);
+  $(".tag").click((e) => {
+    e.target.parentNode.classList.toggle("checked");
+    let tags = [];
+    $("#tagsWrapper")
+      .children()
+      .each(function () {
+        if ($(this).hasClass("checked")) {
+          tags.push($(this).children().first().text());
+        }
+      });
+    if (tags.length == 0) {
+      postsData.forEach((post) => {
+        post.element.classList.toggle("hide", 0);
+      });
+      return;
+    }
+    postsData.forEach((post) => {
+      let isVisible = 1;
+      tags.forEach((e) => {
+        if (!post.tags.map((e) => e.toLowerCase()).includes(e.toLowerCase()))
+          isVisible = 0;
+      });
+      if (searchInput.value != "") {
+        tags.forEach((e) => {
+          if (!post.tags.map((e) => e.toLowerCase()).includes()) isVisible = 0;
+        });
+      }
+      post.element.classList.toggle("hide", !isVisible);
+    });
+  });
 
+  $.get("json/posts.json", (posts) => {
     postsData = posts.map((post) => {
       let card = postTemplate.content.cloneNode(true).children[0];
 
-      card.querySelector("[data-heading]").textContent = post.heading;
+      card.querySelector("[data-heading]").firstChild.textContent =
+        post.heading;
+      card.querySelector("[data-heading]").firstChild.href = "?post=" + post.id;
       card.querySelector("[data-date]").textContent = new Date(
         post.timestamp * 1
       ).toLocaleDateString(undefined, {
@@ -50,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tagEl.textContent = tag;
         tags.appendChild(tagEl);
       });
+      card.querySelector("[data-more]").href = "?post=" + post.id;
 
       postsContainer.append(card);
       return {
@@ -60,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
         element: card,
       };
     });
-    console.log(postsData);
   });
 });
 
