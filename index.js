@@ -15,6 +15,7 @@ app.get("/", function (req, res) {
   }
 });
 
-app.listen(port, function () {
+module.exports = app;
+/*app.listen(port, function () {
   console.log("CORS-enabled web server listening on port " + port);
-});
+});*/
