@@ -1,6 +1,5 @@
-var express = require("express");
-var cors = require("cors");
-var app = express();
+const app = require("express")();
+const cors = require("cors");
 const port = 80;
 
 app.use(cors());
