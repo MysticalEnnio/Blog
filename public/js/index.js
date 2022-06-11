@@ -46,10 +46,13 @@ $(document).ready(() => {
     postsData.forEach((post) => {
       let isVisible = 1;
       tags.forEach((e) => {
-        if (!post.tags.map((e) => e.toLowerCase()).includes(e.toLowerCase()))
+        if (
+          !post.tags.map((e2) => e2.toLowerCase()).includes(e.toLowerCase())
+        ) {
           isVisible = 0;
+        }
       });
-      if (searchInput.value != "") {
+      if (searchInput.value != undefined) {
         tags.forEach((e) => {
           if (!post.tags.map((e) => e.toLowerCase()).includes()) isVisible = 0;
         });
@@ -64,7 +67,8 @@ $(document).ready(() => {
 
       card.querySelector("[data-heading]").firstChild.textContent =
         post.heading;
-      card.querySelector("[data-heading]").firstChild.href = "?post=" + post.id;
+      card.querySelector("[data-heading]").firstChild.href =
+        "/post?id=" + post.id;
       card.querySelector("[data-date]").textContent = new Date(
         post.timestamp * 1
       ).toLocaleDateString(undefined, {
@@ -72,16 +76,16 @@ $(document).ready(() => {
         month: "long",
         day: "numeric",
       });
-      card.querySelector("[data-preview]").textContent = post.content;
+      card.querySelector("[data-preview]").textContent = post.summary;
 
       let tags = card.querySelector("[data-tags]");
       post.tags.forEach((tag) => {
         tagEl = document.createElement("div");
-        tagEl.classList.add("postTag");
+        tagEl.classList.add("post-tag");
         tagEl.textContent = tag;
         tags.appendChild(tagEl);
       });
-      card.querySelector("[data-more]").href = "?post=" + post.id;
+      card.querySelector("[data-more]").href = "/post?id=" + post.id;
 
       postsContainer.append(card);
       return {

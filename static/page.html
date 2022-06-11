@@ -13,16 +13,23 @@ Copyright © 2021 Ennio Marke
 <head>
   <meta charset="UTF-8">
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/post.css">
   <script type="text/javascript">
-    var obj = JSON.parse(<%= objSentFromServer %>)
+    const postData = JSON.parse('<%- postData %>');
   </script>
+  <script src="js/pageRender.js"></script>
   <title></title>
 </head>
 
 <body>
   <div id="header">
-    <h1 id="heading">Blog</h1>
+    <h1 id="heading"><a href="/">Blog</a></h1>
+  </div>
+  <div id="main">
+    <h1 id="postHeading"></h1>
+    <p id="postDate" data-date></p>
+    <div id="postTags" data-tags></div>
+    <div id="postContent" data-contet></div>
   </div>
 </body>
 

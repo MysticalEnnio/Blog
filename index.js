@@ -1,17 +1,22 @@
-var express = require("express");
-var cors = require("cors");
-var app = express();
-const port = 80 || 3000;
+const express = require("express");
+const cors = require("cors");
+const app = express();
+const port = 80 || 8080;
+const post = require("./postHandler.js");
 
 app.use(cors());
 app.use(express.static("public"));
 
 app.get("/", function (req, res) {
-  console.log("post: " + req.query.post);
-  if (req.query.post) {
-    post.show(req.query.post, res);
+  res.sendFile(__dirname + "/static/index.html");
+});
+
+app.get("/post", function (req, res) {
+  console.log("post: " + req.query.id);
+  if (req.query.id) {
+    post.show(req.query.id, res);
   } else {
-    res.sendFile(__dirname + "/static/index.html");
+    res.redirect("/");
   }
 });
 
