@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     month: "long",
     day: "numeric",
   });
-  document.getElementById("postContent").textContent = postData.content;
+  document.getElementById("postContent").innerHTML = postData.content;
 
   let tags = document.getElementById("postTags");
   postData.tags.forEach((tag) => {
