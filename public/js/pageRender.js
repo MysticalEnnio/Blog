@@ -14,7 +14,15 @@ document.addEventListener("DOMContentLoaded", () => {
     tools: {
       header: Header,
       raw: RawTool,
-      image: SimpleImage,
+      image: {
+        class: ImageTool,
+        config: {
+          endpoints: {
+            byFile: "/api/image/uploadFile", // Your backend file uploader endpoint
+            byUrl: "/api/image/uploadUrl", // Your endpoint that provides uploading by Url
+          },
+        },
+      },
       checklist: {
         class: Checklist,
         inlineToolbar: true,

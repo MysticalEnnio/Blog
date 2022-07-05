@@ -21,9 +21,8 @@ app.post("/api/image/uploadFile", function (req, res) {
       res.send({
         success: 1,
         file: {
-          url: process.env.NODE_ENV
-            ? `https://blog.mystaredia.de/images/${req.files.image.md5}.png`
-            : `http://localhost/images/${req.files.image.md5}.png`,
+          url: `http://localhost/images/${req.files.image.md5}.png`,
+          //`https://blog.mystaredia.de/images/${req.files.image.md5}.png`
           // ... and any additional fields you want to store, such as width, height, color, extension, etc
         },
       });

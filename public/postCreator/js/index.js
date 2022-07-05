@@ -66,7 +66,9 @@ document.getElementById("save").addEventListener("click", () => {
         body: postBody,
       })
         .then((res) => res.json())
-        .then((response) => console.log("Response: " + response));
+        .then((response) => {
+          if (response == "200") window.location.replace("/");
+        });
     })
     .catch((error) => {
       console.log("Saving failed: ", error);
