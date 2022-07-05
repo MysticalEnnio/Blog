@@ -30,6 +30,7 @@
     "node-fetch": "^2.6.6"
   },
   "devDependencies": {
+    "dotenv": "^16.0.1",
     "sync-glitch-cli": "^2.0.1"
   }
 }

@@ -29,15 +29,13 @@ Copyright © 2021 Ennio Marke
     <input type="search" id="search" data-search>
   </div>
   <div id="tagsWrapper">
-    <div class="tag">
-      <span class="tag-name">Lorem</span>
-      <div class="tag-count">1</div>
-    </div>
-    <div class="tag">
-      <span class="tag-name">Ipsum</span>
-      <div class="tag-count">2</div>
-    </div>
   </div>
+  <template data-tag-template>
+    <div class="tag">
+      <span class="tag-name" data-tag-name></span>
+      <div class="tag-count" data-tag-count></div>
+    </div>
+  </template>
   <template data-post-template>
     <div class="post">
       <h1 class="post-heading" data-heading><a href="https://blog.mystaredia.de/"

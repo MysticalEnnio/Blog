@@ -1,10 +1,11 @@
 const base64url = require("base64url");
 const fs = require("fs");
 const ejs = require("ejs");
-var posts = JSON.parse(fs.readFileSync("public/json/posts.json", "utf8"));
+var posts;
 
 module.exports = {
   show: function (postId, res) {
+    posts = JSON.parse(fs.readFileSync("public/json/posts.json", "utf8"));
     const html = fs.readFileSync(__dirname + "/static/page.html", "utf8");
     const postData = posts.find((e) => e.id == postId);
     console.log("postData: " + JSON.stringify(postData));

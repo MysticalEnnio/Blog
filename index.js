@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -5,7 +6,7 @@ const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
 const fetch = require("node-fetch");
 const app = express();
-const port = 80 || 8080;
+const port = process.env.PORT;
 const post = require("./postHandler.js");
 const fs = require("fs");
 
