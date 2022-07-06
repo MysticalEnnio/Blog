@@ -136,6 +136,13 @@ a:hover::before {
   font-size: 2.5rem;
 }
 
+#postTags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 .post-tag {
   height: 2rem;
   width: 5rem;
@@ -143,6 +150,7 @@ a:hover::before {
   border-radius: 0.25em;
   margin-top: 0.5em;
   margin-bottom: 0.875em;
+  margin-right: 0.25em;
   display: flex;
   align-items: center;
   justify-content: center;

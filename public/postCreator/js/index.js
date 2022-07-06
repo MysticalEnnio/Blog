@@ -37,40 +37,92 @@ const editor = new EditorJS({
   },
 });
 
-let tags = [];
+let avaibleTags = [];
+let selectedTags = [];
 
-document.getElementById("save").addEventListener("click", () => {
-  editor
-    .save()
-    .then((outputData) => {
-      if (outputData.blocks[0]?.type != "header") {
-        alert("Please add a header as the first block");
-        return;
-      }
-      console.log("Article data: ", outputData);
-      let postBody = JSON.stringify({
-        timestamp: outputData.time,
-        author: "Ennio Marker",
-        heading: outputData.blocks[0].data.text,
-        tags: tags,
-        summary: "Test summary",
-        content: outputData.blocks.slice(1),
+function loadTags() {
+  let tagTemplate = document.querySelector("[data-tag-template]");
+  let tagContainer = document.getElementById("tags");
+  //fetch the tags from the server
+  fetch("/json/tags.json")
+    .then((response) => response.json())
+    .then((data) => {
+      avaibleTags = data;
+      avaibleTags.map((tag) => {
+        let tagCard = tagTemplate.content.cloneNode(true).children[0];
+        tagCard.querySelector("[data-tag-name]").innerHTML = tag;
+        tagContainer.appendChild(tagCard);
       });
-      console.log("Post body: ", postBody);
-      fetch(`/api/newPost`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: postBody,
-      })
-        .then((res) => res.json())
-        .then((response) => {
-          if (response == "200") window.location.replace("/");
-        });
-    })
-    .catch((error) => {
-      console.log("Saving failed: ", error);
+      $(".tag").click((e) => {
+        e.target.parentNode.classList.toggle("checked");
+        selectedTags = [];
+        $("#tags")
+          .children()
+          .each(function () {
+            if ($(this).hasClass("checked")) {
+              selectedTags.push($(this).children().first().text());
+            }
+          });
+      });
+      let tagCard = tagTemplate.content.cloneNode(true).children[0];
+      tagCard.querySelector("[data-tag-name]").innerHTML = "add";
+      tagContainer.appendChild(tagCard);
+      tagCard.addEventListener("click", () => {
+        let tag = prompt("Enter a tag");
+        if (tag) {
+          fetch("/api/addTag?tag=" + tag)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data == "200") avaibleTags.push(tag);
+              tagContainer.innerHTML = "";
+              loadTags();
+            });
+        }
+      });
     });
+}
+
+//Wait for dom to load
+document.addEventListener("DOMContentLoaded", () => {
+  loadTags();
+
+  document.getElementById("save").addEventListener("click", () => {
+    editor
+      .save()
+      .then((outputData) => {
+        if (outputData.blocks[0]?.type != "header") {
+          alert("Please add a header as the first block");
+          return;
+        }
+        if (selectedTags.length < 1) {
+          alert("Please add at least one tag");
+          return;
+        }
+        console.log("Article data: ", outputData);
+        let postBody = JSON.stringify({
+          timestamp: outputData.time,
+          author: "Ennio Marker",
+          heading: outputData.blocks[0].data.text,
+          tags: selectedTags,
+          summary: document.getElementById("summary").value,
+          content: outputData.blocks.slice(1),
+        });
+        console.log("Post body: ", postBody);
+        fetch(`/api/newPost`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: postBody,
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response == "200") window.location.replace("/");
+          });
+      })
+      .catch((error) => {
+        console.log("Saving failed: ", error);
+      });
+  });
 });

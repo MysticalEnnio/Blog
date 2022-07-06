@@ -34,6 +34,18 @@ app.post("/api/image/uploadUrl", function (req, res) {
   console.log("uploadUrl");
 });
 
+app.get("/api/addTag", function (req, res) {
+  fs.readFile("public/json/tags.json", (err, data) => {
+    if (err) throw err;
+    let tags = JSON.parse(data);
+    tags.push(req.query.tag);
+    fs.writeFile("public/json/tags.json", JSON.stringify(tags), (err) => {
+      if (err) throw err;
+      res.send("200");
+    });
+  });
+});
+
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
