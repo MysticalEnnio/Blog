@@ -6,7 +6,7 @@ const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
 const fetch = require("node-fetch");
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 80;
 const post = require("./postHandler.js");
 const fs = require("fs");
 

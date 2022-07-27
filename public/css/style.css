@@ -93,13 +93,13 @@ a:hover::before {
 
 #heading {
   color: var(--heading-color);
-  font-size: 2.5rem;
+  font-size: 7vmin;
 }
 
 #header {
   position: relative;
   top: 0;
-  height: 5rem;
+  height: 6rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,6 +107,7 @@ a:hover::before {
 
 #search {
   width: 100%;
+  height: 5vmin;
   padding: 0.25em 0.5em;
   font-size: 1.25rem;
   background: transparent;
@@ -138,6 +139,7 @@ a:hover::before {
 
 .post-date {
   color: #555;
+  font-size: 3vmin;
 }
 
 .post-tags {
@@ -148,19 +150,28 @@ a:hover::before {
 }
 
 .post-tag {
-  height: 2rem;
-  width: 5rem;
+  height: 5vmin;
+  width: 12vmin;
   border: 1px solid var(--text-color-2);
   border-radius: 0.25em;
   margin: 0.5em 0.75em 0.875em 0em;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 3vmin;
 }
 
 .post-preview {
   margin-bottom: 0.5em;
-  font-size: 1.25rem;
+  font-size: 3vmin;
+}
+
+.post-heading {
+  font-size: 5vmin;
+}
+
+.post-more {
+  font-size: 3vmin;
 }
 
 #tagsWrapper {
@@ -169,8 +180,7 @@ a:hover::before {
 }
 
 .tag {
-  height: 2rem;
-  width: 5rem;
+  height: 7vmin;
   display: flex;
   align-items: center;
   border-radius: 0.25em;
@@ -186,9 +196,11 @@ a:hover::before {
   border-right: none;
   border: 1px solid var(--text-color-2);
   border-radius: 0.25em 0 0 0.25em;
+  font-size: 3vmin;
   background-color: transparent;
   transition: 0.2s;
-  height: 2rem;
+  height: 7vmin;
+  width: 12vmin;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -202,12 +214,13 @@ a:hover::before {
 .tag-count {
   display: flex;
   align-items: center;
-  font-size: 0.8em;
+  font-size: 3vmin;
   background-color: var(--text-color-2);
   color: var(--bg-color);
   border-radius: 0 0.25em 0.25em 0;
   padding: 0 0.5em;
   align-self: stretch;
+  width: 5vmin;
 }
 
 /*Media Keyframes*/
