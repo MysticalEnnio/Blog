@@ -27,10 +27,10 @@
     "ejs": "^3.1.6",
     "express": "^4.17.3",
     "express-fileupload": "^1.4.0",
-    "node-fetch": "^2.6.6"
+    "node-fetch": "^2.6.6",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
     "sync-glitch-cli": "^2.0.1"
   }
 }
