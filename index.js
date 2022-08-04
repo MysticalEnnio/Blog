@@ -5,10 +5,18 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
 const fetch = require("node-fetch");
-const app = express();
-const port = process.env.PORT || 80;
 const post = require("./postHandler.js");
 const fs = require("fs");
+const dbo = require("./db/connection");
+//const CyclicDb = require("cyclic-dynamodb");
+const app = express();
+const port = process.env.PORT || 80;
+
+//const db = CyclicDb("encouraging-clothes-bearCyclicDB");
+//const posts = db.collection("posts");
+
+let db;
+let posts = [];
 
 app.use(express.static("public"));
 app.use(cors());
@@ -49,10 +57,20 @@ app.get("/api/addTag", function (req, res) {
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
-    post.show(req.query.id, res);
+    db.collection("Posts")
+      .find({ id: req.query.id })
+      .toArray()
+      .then((posts) => post.show(posts[0], res));
   } else {
     res.redirect("/");
   }
+});
+
+app.get("/api/getPosts", function (req, res) {
+  db.collection("Posts")
+    .find({})
+    .toArray()
+    .then((posts) => res.send(posts));
 });
 
 app.post("/api/newPost", function (req, res) {
@@ -62,12 +80,26 @@ app.post("/api/newPost", function (req, res) {
   if (!reqData.summary) res.send("missing summary");
   if (!reqData.content) res.send("missing content");
   console.log(reqData);
+  let id = crypto.createHash("md5").update(reqData.heading).digest("hex");
+  let post = {
+    id: id,
+    author: reqData.author,
+    heading: reqData.heading,
+    tags: reqData.tags ? reqData.tags : [],
+    summary: reqData.summary,
+    timestamp: reqData.timestamp,
+    content: reqData.content,
+  };
 
-  fs.readFile("public/json/posts.json", function (err, data) {
+  db.collection("Posts").insertOne(post);
+
+  //posts.set(id, post);
+
+  /*fs.readFile("public/json/posts.json", function (err, data) {
     if (err) throw err;
     let posts = JSON.parse(data);
     posts.push({
-      id: crypto.createHash("md5").update(reqData.heading).digest("hex"),
+      id: id,
       author: reqData.author,
       heading: reqData.heading,
       tags: reqData.tags ? reqData.tags : [],
@@ -83,9 +115,14 @@ app.post("/api/newPost", function (req, res) {
         res.send("200");
       }
     );
-  });
+  });*/
 });
 
 app.listen(port, function () {
   console.log("CORS-enabled web server listening on port " + port);
+});
+
+dbo.connectToServer((err, _db) => {
+  if (err) console.error(err);
+  db = _db;
 });

@@ -1,0 +1,16 @@
+{
+  "name": "Blog post",
+  "short_name": "post",
+  "description": "Post from the blog",
+  "icons": [
+    {
+      "src": "/images/splash-screen.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/post",
+  "display": "fullscreen",
+  "theme_color": "#764ABC",
+  "background_color": "#764ABC"
+}

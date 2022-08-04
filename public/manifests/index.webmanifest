@@ -1,0 +1,17 @@
+{
+  "name": "Blog index",
+  "short_name": "index",
+  "description": "Index page of the blog",
+  "icons": [
+    {
+      "src": "/images/splash-screen.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "prefer_related_applications": false,
+  "theme_color": "#764ABC",
+  "background_color": "#764ABC"
+}

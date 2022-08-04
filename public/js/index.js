@@ -33,7 +33,7 @@ $(document).ready(() => {
     });
   });
 
-  $.get("json/posts.json", (posts) => {
+  $.get("/api/getPosts", (posts) => {
     postsData = posts.map((post) => {
       let postCard = postTemplate.content.cloneNode(true).children[0];
 
@@ -119,6 +119,18 @@ $(document).ready(() => {
       });
     });
   });
+
+  //register service worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/workers/index.js").then(
+      (reg) => {
+        console.log("Service worker registered -->", reg);
+      },
+      (err) => {
+        console.error("Service worker not registered -->", err);
+      }
+    );
+  }
 });
 
 /*********************************

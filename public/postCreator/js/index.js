@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Article data: ", outputData);
         let postBody = JSON.stringify({
           timestamp: outputData.time,
-          author: "Ennio Marker",
+          author: "Ennio Marke",
           heading: outputData.blocks[0].data.text,
           tags: selectedTags,
           summary: document.getElementById("summary").value,
