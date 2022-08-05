@@ -44,12 +44,40 @@ app.use(fileUpload());
 //subscribe route
 app.post("/subscribe", (req, res) => {
   //get push subscription object from the request
-  const subscription = req.body;
+  const notificationSubscription = req.body;
+
+  db.collection("Subscriptions")
+    .find({
+      endpoint: notificationSubscription.endpoint,
+    })
+    .toArray()
+    .then((data) => console.log);
+
   if (db != undefined) {
-    db.collection("Subscriptions").insertOne(subscription);
+    db.collection("Subscriptions")
+      .find({
+        endpoint: notificationSubscription.endpoint,
+      })
+      .toArray()
+      .then((data) => {
+        console.log(data);
+        if (data.length == 0) {
+          db.collection("Subscriptions").insertOne(notificationSubscription);
+        }
+      });
   } else {
     connectToDb(() => {
-      db.collection("Subscriptions").insertOne(subscription);
+      db.collection("Subscriptions")
+        .find({
+          keys: { auth: notificationSubscription.keys.auth },
+        })
+        .toArray()
+        .then((data) => {
+          console.log(data);
+          if (data.length == 0) {
+            db.collection("Subscriptions").insertOne(notificationSubscription);
+          }
+        });
     });
   }
 
@@ -138,6 +166,7 @@ app.get("/api/getPosts", function (req, res) {
 });
 
 app.post("/api/newPost", function (req, res) {
+  console.log("newPost");
   let reqData = req.body;
   if (!reqData.author) res.send("missing author");
   if (!reqData.heading) res.send("missing heading");
@@ -154,41 +183,43 @@ app.post("/api/newPost", function (req, res) {
     timestamp: reqData.timestamp,
     content: reqData.content,
   };
-  let subscriptions = [];
 
+  res.send("200");
   if (db != undefined) {
     db.collection("Posts").insertOne(post);
-    db.collection("Subsciptions")
+    db.collection("Subscriptions")
       .find({})
       .toArray()
-      .then((subs) => (subscriptions = subs));
+      .then((subscriptions) => sendNotifications(subscriptions, id));
   } else {
     connectToDb(() => {
       db.collection("Posts").insertOne(post);
-      db.collection("Subsciptions")
+      db.collection("Subscriptions")
         .find({})
         .toArray()
-        .then((subs) => (subscriptions = subs));
+        .then((subscriptions) => sendNotifications(subscriptions, id));
     });
   }
+});
 
+function sendNotifications(subscriptions, id) {
+  console.log(subscriptions);
   //create paylod: specified the detals of the push notification
   const payload = JSON.stringify({
     title: "Es ist ein neuer Blogbeitrag von Ennio verfügbar",
     message: "Klicke hier um ihn zu lesen",
     postId: id,
   });
-
   console.log("Sending notification...");
   //pass the object into sendNotification fucntion and catch any error
   subscriptions.forEach((subscription) => {
     webpush
       .sendNotification(subscription, payload)
+      .then((data) => console.log(data))
       .catch((err) => console.error(err));
-    res.send("200");
   });
   console.log("All notifications send");
-});
+}
 
 function connectToDb(callback) {
   dbo.connectToServer((err, _db) => {
