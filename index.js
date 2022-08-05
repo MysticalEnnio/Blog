@@ -113,7 +113,33 @@ app.post("/api/image/uploadFile", function (req, res) {
 });
 
 app.post("/api/image/uploadUrl", function (req, res) {
-  console.log("uploadUrl");
+  imagekit.upload(
+    {
+      file: req.body.url, //required
+      fileName: req.body.url.slice(
+        req.body.url.lastIndexOf("/"),
+        req.body.url.length
+      ), //required
+      tags: ["usa-blog"],
+    },
+    function (error, result) {
+      if (error) {
+        console.log(error);
+        res.send({
+          success: 0,
+        });
+      } else {
+        console.log(result);
+        res.send({
+          success: 1,
+          file: {
+            url: result.url,
+            // ... and any additional fields you want to store, such as width, height, color, extension, etc
+          },
+        });
+      }
+    }
+  );
 });
 
 app.get("/api/addTag", function (req, res) {
@@ -165,7 +191,7 @@ app.get("/api/getPosts", function (req, res) {
   }
 });
 
-app.get("/deleteTestPosts", function (req, res) {
+app.get("/api/deleteTestPosts", function (req, res) {
   if (db != undefined) {
     db.collection("Posts").deleteMany({ summary: "test" });
   } else {

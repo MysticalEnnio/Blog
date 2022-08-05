@@ -38,6 +38,7 @@ async function send() {
       scope: "/",
     })
     .then((registration) => {
+      setTimeout(() => {}, 500);
       //register push
       registration.pushManager
         .subscribe({
