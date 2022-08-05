@@ -30,13 +30,13 @@ function urlBase64ToUint8Array(base64String) {
 //register the service worker, register our push api, send the notification
 async function send() {
   //register service worker
-  const register = await navigator.serviceWorker
+  navigator.serviceWorker
     .register("/sw.js", {
       scope: "/",
     })
     .then(function (registration) {
       //register push
-      register.pushManager
+      registration.pushManager
         .subscribe({
           userVisibleOnly: true,
 
@@ -56,8 +56,9 @@ async function send() {
     })
     .catch(function (error) {
       alert(
-        "Service Worker registration failed with " + error,
-        "Please contact the administrator"
+        "Service Worker registration failed: \n" +
+          error +
+          "\nPlease contact the administrator"
       );
     });
 }
