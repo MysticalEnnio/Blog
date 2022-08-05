@@ -99,7 +99,6 @@ function loadPostData(postTemplate, postsContainer, tagTemplate) {
       }
     })
     .then((posts) => {
-      console.log(posts);
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
@@ -143,7 +142,6 @@ function loadPostData(postTemplate, postsContainer, tagTemplate) {
           element: postCard,
         };
       });
-      console.log(tags);
       tags.map((e) => {
         let tagCard = tagTemplate.content.cloneNode(true).children[0];
         tagCard.querySelector("[data-tag-name]").innerHTML = e.name;
