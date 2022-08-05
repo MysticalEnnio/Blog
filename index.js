@@ -127,11 +127,11 @@ app.post("/api/newPost", function (req, res) {
   });*/
 });
 
-function connectToDb(callback) {
+function connectToDb(callbackFunction) {
   dbo.connectToServer((err, _db) => {
     if (err) console.error(err);
     db = _db;
-    callback();
+    callbackFunction();
   });
 }
 
