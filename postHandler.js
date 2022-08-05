@@ -15,7 +15,7 @@ module.exports = {
         console.error(err);
       });
     postData.content.forEach((element) => {
-      translatte(element.data.text, { to: "de" })
+      translatte(element.data.text || element.data.caption, { to: "de" })
         .then((res) => {
           element.data.text = res.text;
           finishedTranslations++;
