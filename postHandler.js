@@ -17,7 +17,8 @@ module.exports = {
     postData.content.forEach((element) => {
       translatte(element.data.text || element.data.caption, { to: "de" })
         .then((res) => {
-          element.data.text = res.text;
+          if (element.data.text) element.data.text = res.text;
+          else element.data.caption = res.text;
           finishedTranslations++;
         })
         .catch((err) => {
