@@ -172,14 +172,13 @@ $(document).ready(() => {
         post.element.classList.toggle("hide", !isVisible);
       });
     });
+    //set up service worker for notifications
+
+    //check if the serveice worker can work in the current browser
+    if ("serviceWorker" in navigator) {
+      send().catch((err) => console.error(err));
+    }
   });
-
-  //set up service worker for notifications
-
-  //check if the serveice worker can work in the current browser
-  if ("serviceWorker" in navigator) {
-    send().catch((err) => console.error(err));
-  }
 });
 
 /*********************************
