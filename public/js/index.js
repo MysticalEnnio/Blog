@@ -91,7 +91,7 @@ $(document).ready(() => {
 function loadPostData() {
   fetch("/api/getPosts")
     .then((posts) => {
-      console.log(posts);
+      console.log(JSON.stringify(posts));
       if (posts == {}) {
         setTimeout(loadPostData, 50);
         return;
