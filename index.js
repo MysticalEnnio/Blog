@@ -4,7 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
-const fetch = require("node-fetch");
+var ImageKit = require("imagekit");
 const post = require("./postHandler.js");
 const fs = require("fs");
 const dbo = require("./db/connection");
@@ -17,6 +17,11 @@ const port = process.env.PORT || 80;
 
 let db;
 let posts = [];
+var imagekit = new ImageKit({
+  publicKey: "public_D202xiGxO/ZlrH8PUHojBH95ft8=",
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: "https://ik.imagekit.io/mystical/",
+});
 
 app.use(express.static("public"));
 app.use(cors());
@@ -24,18 +29,30 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 
 app.post("/api/image/uploadFile", function (req, res) {
-  let imgB64 = req.files.image
-    .mv(`public/images/${req.files.image.md5}.png`)
-    .then(() => {
-      res.send({
-        success: 1,
-        file: {
-          url: `http://localhost/images/${req.files.image.md5}.png`,
-          //`https://blog.mystaredia.de/images/${req.files.image.md5}.png`
-          // ... and any additional fields you want to store, such as width, height, color, extension, etc
-        },
-      });
-    });
+  imagekit.upload(
+    {
+      file: req.files.image.data, //required
+      fileName: req.files.image.md5, //required
+      tags: ["usa-blog"],
+    },
+    function (error, result) {
+      if (error) {
+        console.log(error);
+        res.send({
+          success: 0,
+        });
+      } else {
+        console.log(result);
+        res.send({
+          success: 1,
+          file: {
+            url: result.url,
+            // ... and any additional fields you want to store, such as width, height, color, extension, etc
+          },
+        });
+      }
+    }
+  );
 });
 
 app.post("/api/image/uploadUrl", function (req, res) {
