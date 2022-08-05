@@ -64,7 +64,6 @@ async function send() {
 }
 
 $(document).ready(() => {
-  console.log("ready!");
   const postTemplate = document.querySelector("[data-post-template]");
   const tagTemplate = document.querySelector("[data-tag-template]");
   const postsContainer = $("#posts");
@@ -72,7 +71,6 @@ $(document).ready(() => {
 
   let postsData = [];
   let tags = [];
-  console.log("s1");
   searchInput.on("input propertychange", (e) => {
     const value = e.target.value.toLowerCase();
     postsData.forEach((post) => {
@@ -86,11 +84,9 @@ $(document).ready(() => {
       post.element.classList.toggle("hide", !isVisible);
     });
   });
-  console.log("s2");
   fetch("/api/getPosts")
     .then((posts) => {
-      console.log("s3");
-      alert(posts == "");
+      alert(posts);
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
