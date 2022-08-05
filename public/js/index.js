@@ -86,7 +86,7 @@ $(document).ready(() => {
   });
   fetch("/api/getPosts")
     .then((posts) => {
-      alert(posts);
+      alert(JSON.stringify(posts));
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
