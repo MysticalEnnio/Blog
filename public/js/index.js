@@ -91,7 +91,11 @@ $(document).ready(() => {
 function loadPostData() {
   fetch("/api/getPosts")
     .then((posts) => {
-      if (posts == {}) setTimeout(loadPostData, 50);
+      if (posts == {}) {
+        setTimeout(loadPostData, 50);
+        return;
+      }
+
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
