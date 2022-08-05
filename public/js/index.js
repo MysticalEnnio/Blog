@@ -87,10 +87,10 @@ $(document).ready(() => {
     });
   });
 
-  loadPostData(postTemplate, postsContainer, tagTemplate);
+  loadPostData(postTemplate, postsContainer, tagTemplate, searchInput);
 });
 
-function loadPostData(postTemplate, postsContainer, tagTemplate) {
+function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
   fetch("/api/getPosts")
     .then((res) => {
       if (res.status == 200) return res.json();

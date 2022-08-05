@@ -44,10 +44,13 @@ function loadTags() {
   let tagTemplate = document.querySelector("[data-tag-template]");
   let tagContainer = document.getElementById("tags");
   //fetch the tags from the server
-  fetch("/json/tags.json")
+  fetch("/api/getTags")
     .then((response) => response.json())
     .then((data) => {
-      avaibleTags = data;
+      avaibleTags = [];
+      data.forEach((tag) => {
+        avaibleTags.push(tag.name);
+      });
       avaibleTags.map((tag) => {
         let tagCard = tagTemplate.content.cloneNode(true).children[0];
         tagCard.querySelector("[data-tag-name]").innerHTML = tag;
@@ -70,7 +73,7 @@ function loadTags() {
       tagCard.addEventListener("click", () => {
         let tag = prompt("Enter a tag");
         if (tag) {
-          fetch("/api/addTag?tag=" + tag)
+          fetch("/api/addTag?name=" + tag)
             .then((response) => response.json())
             .then((data) => {
               if (data == "200") avaibleTags.push(tag);

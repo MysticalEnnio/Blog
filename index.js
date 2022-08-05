@@ -143,15 +143,38 @@ app.post("/api/image/uploadUrl", function (req, res) {
 });
 
 app.get("/api/addTag", function (req, res) {
-  fs.readFile("public/json/tags.json", (err, data) => {
-    if (err) throw err;
-    let tags = JSON.parse(data);
-    tags.push(req.query.tag);
-    fs.writeFile("public/json/tags.json", JSON.stringify(tags), (err) => {
-      if (err) throw err;
-      res.send("200");
+  if (!req.query.name) {
+    res.send("No tag specified");
+    return;
+  }
+  if (db != undefined) {
+    db.collection("Tags").insertOne({
+      name: req.query.name,
     });
-  });
+  } else {
+    connectToDb(() => {
+      db.collection("Tags").insertOne({
+        name: req.query.name,
+      });
+    });
+  }
+  res.send(200);
+});
+
+app.get("/api/getTags", function (req, res) {
+  if (db != undefined) {
+    db.collection("Tags")
+      .find({})
+      .toArray()
+      .then((tags) => res.send(tags));
+  } else {
+    connectToDb(() => {
+      db.collection("Tags")
+        .find({})
+        .toArray()
+        .then((tags) => res.send(tags));
+    });
+  }
 });
 
 app.get("/post", function (req, res) {
