@@ -90,6 +90,7 @@ $(document).ready(() => {
 
 function loadPostData() {
   fetch("/api/getPosts")
+    .then((res) => res.json())
     .then((posts) => {
       console.log(posts);
       if (posts == {}) {
