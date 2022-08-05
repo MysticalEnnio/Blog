@@ -57,10 +57,19 @@ app.get("/api/addTag", function (req, res) {
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
-    db.collection("Posts")
-      .find({ id: req.query.id })
-      .toArray()
-      .then((posts) => post.show(posts[0], res));
+    if (db != undefined) {
+      db.collection("Posts")
+        .find({ id: req.query.id })
+        .toArray()
+        .then((posts) => post.show(posts[0], res));
+    } else {
+      connectToDb(() => {
+        db.collection("Posts")
+          .find({ id: req.query.id })
+          .toArray()
+          .then((posts) => post.show(posts[0], res));
+      });
+    }
   } else {
     res.redirect("/");
   }
@@ -118,10 +127,11 @@ app.post("/api/newPost", function (req, res) {
   });*/
 });
 
-function connectToDb() {
+function connectToDb(callback) {
   dbo.connectToServer((err, _db) => {
     if (err) console.error(err);
     db = _db;
+    callback();
   });
 }
 
