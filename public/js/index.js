@@ -72,7 +72,7 @@ $(document).ready(() => {
 
   let postsData = [];
   let tags = [];
-
+  console.log("s1");
   searchInput.on("input propertychange", (e) => {
     const value = e.target.value.toLowerCase();
     postsData.forEach((post) => {
@@ -86,7 +86,7 @@ $(document).ready(() => {
       post.element.classList.toggle("hide", !isVisible);
     });
   });
-
+  console.log("s2");
   $.get("/api/getPosts", (posts) => {
     alert(posts == "");
     postsData = posts.map((post) => {
