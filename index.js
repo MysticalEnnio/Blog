@@ -153,6 +153,7 @@ app.post("/api/newPost", function (req, res) {
   webpush
     .sendNotification(subscription, payload)
     .catch((err) => console.error(err));
+  res.send("200");
 });
 
 function connectToDb(callback) {
