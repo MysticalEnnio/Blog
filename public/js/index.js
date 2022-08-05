@@ -12,6 +12,9 @@ const userLang = navigator.language || navigator.userLanguage;
 const publicVapidKey =
   "BH6sYvnAi9yM8aPtp8lHE0h9Her_ERKt6_XwTKiOA_6L0rUPsipAo-TL30QLj37DrVJkxk0fVCiWskd3sfZnSg0";
 
+let postsData = [];
+let tags = [];
+
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
@@ -69,8 +72,6 @@ $(document).ready(() => {
   const postsContainer = $("#posts");
   const searchInput = $("#search");
 
-  let postsData = [];
-  let tags = [];
   searchInput.on("input propertychange", (e) => {
     const value = e.target.value.toLowerCase();
     postsData.forEach((post) => {
@@ -85,19 +86,14 @@ $(document).ready(() => {
     });
   });
 
-  loadPostData();
+  loadPostData(postTemplate, postsContainer, tagTemplate);
 });
 
-function loadPostData() {
+function loadPostData(postTemplate, postsContainer, tagTemplate) {
   fetch("/api/getPosts")
-    .then((res) => {
-      if (res.status == 200) res.json();
-      else {
-        setTimeout(loadPostData, 50);
-        return;
-      }
-    })
+    .then((res) => res.json())
     .then((posts) => {
+      console.log(posts);
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
@@ -189,7 +185,7 @@ function loadPostData() {
         send().catch((err) => console.error(err));
       }
     })
-    .catch((err) => alert(err));
+    .catch((err) => console.error(err));
 }
 
 /*********************************
