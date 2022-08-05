@@ -64,6 +64,7 @@ async function send() {
 }
 
 $(document).ready(() => {
+  console.log("ready!");
   const postTemplate = document.querySelector("[data-post-template]");
   const tagTemplate = document.querySelector("[data-tag-template]");
   const postsContainer = $("#posts");
