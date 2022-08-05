@@ -198,6 +198,7 @@ app.post("/api/newPost", function (req, res) {
   res.send("200");
   if (db != undefined) {
     db.collection("Posts").insertOne(post);
+    if (post.summary == "test") return;
     db.collection("Subscriptions")
       .find({})
       .toArray()
@@ -205,6 +206,7 @@ app.post("/api/newPost", function (req, res) {
   } else {
     connectToDb(() => {
       db.collection("Posts").insertOne(post);
+      if (post.summary == "test") return;
       db.collection("Subscriptions")
         .find({})
         .toArray()
