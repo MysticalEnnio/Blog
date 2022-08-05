@@ -87,100 +87,102 @@ $(document).ready(() => {
     });
   });
   console.log("s2");
-  $.get("/api/getPosts", (posts) => {
-    console.log("s3");
-    alert(posts == "");
-    postsData = posts.map((post) => {
-      let postCard = postTemplate.content.cloneNode(true).children[0];
+  fetch("/api/getPosts")
+    .then((posts) => {
+      console.log("s3");
+      alert(posts == "");
+      postsData = posts.map((post) => {
+        let postCard = postTemplate.content.cloneNode(true).children[0];
 
-      postCard.querySelector("[data-heading]").firstChild.textContent =
-        post.heading;
-      postCard.querySelector("[data-heading]").firstChild.href =
-        "/post?id=" + post.id;
-      postCard.querySelector("[data-date]").textContent = new Date(
-        post.timestamp * 1
-      ).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-      postCard.querySelector("[data-preview]").textContent = post.summary;
+        postCard.querySelector("[data-heading]").firstChild.textContent =
+          post.heading;
+        postCard.querySelector("[data-heading]").firstChild.href =
+          "/post?id=" + post.id;
+        postCard.querySelector("[data-date]").textContent = new Date(
+          post.timestamp * 1
+        ).toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        postCard.querySelector("[data-preview]").textContent = post.summary;
 
-      let postTags = postCard.querySelector("[data-tags]");
-      post.tags.forEach((tag) => {
-        tagEl = document.createElement("div");
-        tagEl.classList.add("post-tag");
-        tagEl.textContent = tag;
-        postTags.appendChild(tagEl);
-      });
-      postCard.querySelector("[data-more]").href = "/post?id=" + post.id;
+        let postTags = postCard.querySelector("[data-tags]");
+        post.tags.forEach((tag) => {
+          tagEl = document.createElement("div");
+          tagEl.classList.add("post-tag");
+          tagEl.textContent = tag;
+          postTags.appendChild(tagEl);
+        });
+        postCard.querySelector("[data-more]").href = "/post?id=" + post.id;
 
-      postsContainer.append(postCard);
+        postsContainer.append(postCard);
 
-      post.tags.map((e) => {
-        if (tags.filter((e2) => e2.name == e)?.length > 0) {
-          tags.filter((e2) => e2.name == e)[0].count++;
-        } else {
-          tags.push({ name: e, count: 1 });
-        }
-      });
-
-      return {
-        heading: post.heading,
-        timestamp: post.timestamp,
-        content: post.content,
-        tags: post.tags,
-        element: postCard,
-      };
-    });
-    console.log(tags);
-    tags.map((e) => {
-      let tagCard = tagTemplate.content.cloneNode(true).children[0];
-      tagCard.querySelector("[data-tag-name]").innerHTML = e.name;
-      tagCard.querySelector("[data-tag-count]").innerHTML = e.count;
-      $("#tagsWrapper").append(tagCard);
-    });
-    $(".tag").click((e) => {
-      e.target.parentNode.classList.toggle("checked");
-      let selectedTags = [];
-      $("#tagsWrapper")
-        .children()
-        .each(function () {
-          if ($(this).hasClass("checked")) {
-            selectedTags.push($(this).children().first().text());
+        post.tags.map((e) => {
+          if (tags.filter((e2) => e2.name == e)?.length > 0) {
+            tags.filter((e2) => e2.name == e)[0].count++;
+          } else {
+            tags.push({ name: e, count: 1 });
           }
         });
-      if (selectedTags.length == 0) {
-        postsData.forEach((post) => {
-          post.element.classList.toggle("hide", 0);
-        });
-        return;
-      }
-      postsData.forEach((post) => {
-        let isVisible = 1;
-        selectedTags.forEach((e) => {
-          if (
-            !post.tags.map((e2) => e2.toLowerCase()).includes(e.toLowerCase())
-          ) {
-            isVisible = 0;
-          }
-        });
-        if (searchInput.value != undefined) {
-          selectedTags.forEach((e) => {
-            if (!post.tags.map((e) => e.toLowerCase()).includes())
-              isVisible = 0;
+
+        return {
+          heading: post.heading,
+          timestamp: post.timestamp,
+          content: post.content,
+          tags: post.tags,
+          element: postCard,
+        };
+      });
+      console.log(tags);
+      tags.map((e) => {
+        let tagCard = tagTemplate.content.cloneNode(true).children[0];
+        tagCard.querySelector("[data-tag-name]").innerHTML = e.name;
+        tagCard.querySelector("[data-tag-count]").innerHTML = e.count;
+        $("#tagsWrapper").append(tagCard);
+      });
+      $(".tag").click((e) => {
+        e.target.parentNode.classList.toggle("checked");
+        let selectedTags = [];
+        $("#tagsWrapper")
+          .children()
+          .each(function () {
+            if ($(this).hasClass("checked")) {
+              selectedTags.push($(this).children().first().text());
+            }
           });
+        if (selectedTags.length == 0) {
+          postsData.forEach((post) => {
+            post.element.classList.toggle("hide", 0);
+          });
+          return;
         }
-        post.element.classList.toggle("hide", !isVisible);
+        postsData.forEach((post) => {
+          let isVisible = 1;
+          selectedTags.forEach((e) => {
+            if (
+              !post.tags.map((e2) => e2.toLowerCase()).includes(e.toLowerCase())
+            ) {
+              isVisible = 0;
+            }
+          });
+          if (searchInput.value != undefined) {
+            selectedTags.forEach((e) => {
+              if (!post.tags.map((e) => e.toLowerCase()).includes())
+                isVisible = 0;
+            });
+          }
+          post.element.classList.toggle("hide", !isVisible);
+        });
       });
-    });
-    //set up service worker for notifications
+      //set up service worker for notifications
 
-    //check if the serveice worker can work in the current browser
-    if ("serviceWorker" in navigator) {
-      send().catch((err) => console.error(err));
-    }
-  });
+      //check if the serveice worker can work in the current browser
+      if ("serviceWorker" in navigator) {
+        send().catch((err) => console.error(err));
+      }
+    })
+    .catch((err) => alert(err));
 });
 
 /*********************************
