@@ -32,9 +32,8 @@ async function send() {
   //register service worker
   const register = await navigator.serviceWorker.register("/sw.js", {
     scope: "/",
-  });
-
-  //register push
+  }).then(function(registration) {
+    //register push
   const subscription = await register.pushManager.subscribe({
     userVisibleOnly: true,
 
@@ -49,6 +48,9 @@ async function send() {
     headers: {
       "content-type": "application/json",
     },
+  });
+  }).catch(function(error) {
+    alert("Service Worker registration failed with " + error, "Please contact the administrator");
   });
 }
 
