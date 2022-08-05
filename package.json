@@ -30,7 +30,8 @@
     "express": "^4.17.3",
     "express-fileupload": "^1.4.0",
     "mongodb": "^4.8.1",
-    "node-fetch": "^2.6.6"
+    "node-fetch": "^2.6.6",
+    "translatte": "^3.0.1"
   },
   "devDependencies": {
     "sync-glitch-cli": "^2.0.1"

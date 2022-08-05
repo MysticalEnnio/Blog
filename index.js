@@ -118,11 +118,15 @@ app.post("/api/newPost", function (req, res) {
   });*/
 });
 
+function connectToDb() {
+  dbo.connectToServer((err, _db) => {
+    if (err) console.error(err);
+    db = _db;
+  });
+}
+
 app.listen(port, function () {
   console.log("CORS-enabled web server listening on port " + port);
 });
 
-dbo.connectToServer((err, _db) => {
-  if (err) console.error(err);
-  db = _db;
-});
+connectToDb();
