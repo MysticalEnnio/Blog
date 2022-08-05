@@ -48,14 +48,6 @@ app.post("/subscribe", (req, res) => {
 
   //send status 201 for the request
   res.status(201).json({});
-
-  //create paylod: specified the detals of the push notification
-  const payload = JSON.stringify({ title: "Section.io Push Notification" });
-
-  //pass the object into sendNotification fucntion and catch any error
-  webpush
-    .sendNotification(subscription, payload)
-    .catch((err) => console.error(err));
 });
 
 app.post("/api/image/uploadFile", function (req, res) {
@@ -149,29 +141,17 @@ app.post("/api/newPost", function (req, res) {
 
   db.collection("Posts").insertOne(post);
 
-  //posts.set(id, post);
+  //create paylod: specified the detals of the push notification
+  const payload = JSON.stringify({
+    title: "Es ist ein neuer Blogbeitrag von Ennio verfügbar",
+    message: "Klicke hier um ihn zu lesen",
+    postId: id,
+  });
 
-  /*fs.readFile("public/json/posts.json", function (err, data) {
-    if (err) throw err;
-    let posts = JSON.parse(data);
-    posts.push({
-      id: id,
-      author: reqData.author,
-      heading: reqData.heading,
-      tags: reqData.tags ? reqData.tags : [],
-      summary: reqData.summary,
-      timestamp: reqData.timestamp,
-      content: reqData.content,
-    });
-    fs.writeFile(
-      "public/json/posts.json",
-      JSON.stringify(posts),
-      function (err) {
-        if (err) throw err;
-        res.send("200");
-      }
-    );
-  });*/
+  //pass the object into sendNotification fucntion and catch any error
+  webpush
+    .sendNotification(subscription, payload)
+    .catch((err) => console.error(err));
 });
 
 function connectToDb(callback) {
