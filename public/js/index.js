@@ -33,7 +33,6 @@ function urlBase64ToUint8Array(base64String) {
 //register the service worker, register our push api, send the notification
 async function send() {
   //register service worker
-  alert("Asking for permission...");
   navigator.serviceWorker
     .register("/sw.js", {
       scope: "/",
@@ -48,7 +47,6 @@ async function send() {
           applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
         })
         .then((subscription) => {
-          alert("Permission granted!");
           //Send push notification
           fetch("/subscribe", {
             method: "POST",
