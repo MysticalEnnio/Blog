@@ -10,7 +10,7 @@ const fs = require("fs");
 const dbo = require("./db/connection");
 //const CyclicDb = require("cyclic-dynamodb");
 const app = express();
-const port = 80;
+const port = process.env.PORT || 80;
 
 //const db = CyclicDb("encouraging-clothes-bearCyclicDB");
 //const posts = db.collection("posts");
