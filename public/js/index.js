@@ -84,9 +84,12 @@ $(document).ready(() => {
       post.element.classList.toggle("hide", !isVisible);
     });
   });
+});
+
+function loadPostData() {
   fetch("/api/getPosts")
     .then((posts) => {
-      alert(JSON.stringify(posts));
+      if (posts == {}) setTimeout(loadPostData, 50);
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
@@ -179,7 +182,7 @@ $(document).ready(() => {
       }
     })
     .catch((err) => alert(err));
-});
+}
 
 /*********************************
        :\     /;               _
