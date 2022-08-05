@@ -99,6 +99,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate) {
       }
     })
     .then((posts) => {
+      if (posts == undefined) return;
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
