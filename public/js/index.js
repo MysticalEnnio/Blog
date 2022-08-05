@@ -30,28 +30,36 @@ function urlBase64ToUint8Array(base64String) {
 //register the service worker, register our push api, send the notification
 async function send() {
   //register service worker
-  const register = await navigator.serviceWorker.register("/sw.js", {
-    scope: "/",
-  }).then(function(registration) {
-    //register push
-  const subscription = await register.pushManager.subscribe({
-    userVisibleOnly: true,
+  const register = await navigator.serviceWorker
+    .register("/sw.js", {
+      scope: "/",
+    })
+    .then(function (registration) {
+      //register push
+      register.pushManager
+        .subscribe({
+          userVisibleOnly: true,
 
-    //public vapid key
-    applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-  });
-
-  //Send push notification
-  await fetch("/subscribe", {
-    method: "POST",
-    body: JSON.stringify(subscription),
-    headers: {
-      "content-type": "application/json",
-    },
-  });
-  }).catch(function(error) {
-    alert("Service Worker registration failed with " + error, "Please contact the administrator");
-  });
+          //public vapid key
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+        })
+        .then((subscription) => {
+          //Send push notification
+          fetch("/subscribe", {
+            method: "POST",
+            body: JSON.stringify(subscription),
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        });
+    })
+    .catch(function (error) {
+      alert(
+        "Service Worker registration failed with " + error,
+        "Please contact the administrator"
+      );
+    });
 }
 
 $(document).ready(() => {
