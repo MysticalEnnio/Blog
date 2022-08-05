@@ -115,10 +115,19 @@ app.get("/post", function (req, res) {
 });
 
 app.get("/api/getPosts", function (req, res) {
-  db.collection("Posts")
-    .find({})
-    .toArray()
-    .then((posts) => res.send(posts));
+  if (db != undefined) {
+    db.collection("Posts")
+      .find({})
+      .toArray()
+      .then((posts) => res.send(posts));
+  } else {
+    connectToDb(() => {
+      db.collection("Posts")
+        .find({})
+        .toArray()
+        .then((posts) => res.send(posts));
+    });
+  }
 });
 
 app.post("/api/newPost", function (req, res) {
@@ -139,7 +148,13 @@ app.post("/api/newPost", function (req, res) {
     content: reqData.content,
   };
 
-  db.collection("Posts").insertOne(post);
+  if (db != undefined) {
+    db.collection("Posts").insertOne(post);
+  } else {
+    connectToDb(() => {
+      db.collection("Posts").insertOne(post);
+    });
+  }
 
   //create paylod: specified the detals of the push notification
   const payload = JSON.stringify({
