@@ -165,6 +165,17 @@ app.get("/api/getPosts", function (req, res) {
   }
 });
 
+app.get("/deleteTestPosts", function (req, res) {
+  if (db != undefined) {
+    db.collection("Posts").deleteMany({ summary: "test" });
+  } else {
+    connectToDb(() => {
+      db.collection("Posts").deleteMany({ summary: "test" });
+    });
+  }
+  res.sendStatus(200);
+});
+
 app.post("/api/newPost", function (req, res) {
   console.log("newPost");
   let reqData = req.body;
