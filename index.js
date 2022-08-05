@@ -18,6 +18,7 @@ const port = process.env.PORT || 80;
 
 let db;
 let posts = [];
+let dbConnected = false;
 var imagekit = new ImageKit({
   publicKey: "public_D202xiGxO/ZlrH8PUHojBH95ft8=",
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
@@ -53,33 +54,18 @@ app.post("/subscribe", (req, res) => {
     .toArray()
     .then((data) => console.log);
 
-  if (db != undefined) {
-    db.collection("Subscriptions")
-      .find({
-        endpoint: notificationSubscription.endpoint,
-      })
-      .toArray()
-      .then((data) => {
-        console.log(data);
-        if (data.length == 0) {
-          db.collection("Subscriptions").insertOne(notificationSubscription);
-        }
-      });
-  } else {
-    connectToDb(() => {
-      db.collection("Subscriptions")
-        .find({
-          keys: { auth: notificationSubscription.keys.auth },
-        })
-        .toArray()
-        .then((data) => {
-          console.log(data);
-          if (data.length == 0) {
-            db.collection("Subscriptions").insertOne(notificationSubscription);
-          }
-        });
+  connectToDb();
+  db.collection("Subscriptions")
+    .find({
+      endpoint: notificationSubscription.endpoint,
+    })
+    .toArray()
+    .then((data) => {
+      console.log(data);
+      if (data.length == 0) {
+        db.collection("Subscriptions").insertOne(notificationSubscription);
+      }
     });
-  }
 
   //send status 201 for the request
   res.status(201).json({});
@@ -147,81 +133,46 @@ app.get("/api/addTag", function (req, res) {
     res.send("No tag specified");
     return;
   }
-  if (db != undefined) {
-    db.collection("Tags").insertOne({
-      name: req.query.name,
-    });
-  } else {
-    connectToDb(() => {
-      db.collection("Tags").insertOne({
-        name: req.query.name,
-      });
-    });
-  }
+  connectToDb();
+  db.collection("Tags").insertOne({
+    name: req.query.name,
+  });
+
   res.send(200);
 });
 
 app.get("/api/getTags", function (req, res) {
-  if (db != undefined) {
-    db.collection("Tags")
-      .find({})
-      .toArray()
-      .then((tags) => res.send(tags));
-  } else {
-    connectToDb(() => {
-      db.collection("Tags")
-        .find({})
-        .toArray()
-        .then((tags) => res.send(tags));
-    });
-  }
+  connectToDb();
+  db.collection("Tags")
+    .find({})
+    .toArray()
+    .then((tags) => res.send(tags));
 });
 
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
-    if (db != undefined) {
-      db.collection("Posts")
-        .find({ id: req.query.id })
-        .toArray()
-        .then((posts) => post.show(posts[0], res));
-    } else {
-      connectToDb(() => {
-        db.collection("Posts")
-          .find({ id: req.query.id })
-          .toArray()
-          .then((posts) => post.show(posts[0], res));
-      });
-    }
+    connectToDb();
+    db.collection("Posts")
+      .find({ id: req.query.id })
+      .toArray()
+      .then((posts) => post.show(posts[0], res));
   } else {
     res.redirect("/");
   }
 });
 
 app.get("/api/getPosts", function (req, res) {
-  if (db != undefined) {
-    db.collection("Posts")
-      .find({})
-      .toArray()
-      .then((posts) => res.send(posts));
-  } else {
-    connectToDb(() => {
-      db.collection("Posts")
-        .find({})
-        .toArray()
-        .then((posts) => res.send(posts));
-    });
-  }
+  connectToDb();
+  db.collection("Posts")
+    .find({})
+    .toArray()
+    .then((posts) => res.send(posts));
 });
 
 app.get("/api/deleteTestPosts", function (req, res) {
-  if (db != undefined) {
-    db.collection("Posts").deleteMany({ summary: "test" });
-  } else {
-    connectToDb(() => {
-      db.collection("Posts").deleteMany({ summary: "test" });
-    });
-  }
+  connectToDb();
+  db.collection("Posts").deleteMany({ summary: "test" });
   res.sendStatus(200);
 });
 
@@ -245,23 +196,13 @@ app.post("/api/newPost", function (req, res) {
   };
 
   res.send("200");
-  if (db != undefined) {
-    db.collection("Posts").insertOne(post);
-    if (post.summary == "test") return;
-    db.collection("Subscriptions")
-      .find({})
-      .toArray()
-      .then((subscriptions) => sendNotifications(subscriptions, id));
-  } else {
-    connectToDb(() => {
-      db.collection("Posts").insertOne(post);
-      if (post.summary == "test") return;
-      db.collection("Subscriptions")
-        .find({})
-        .toArray()
-        .then((subscriptions) => sendNotifications(subscriptions, id));
-    });
-  }
+  connectToDb(callback);
+  db.collection("Posts").insertOne(post);
+  if (post.summary == "test") return;
+  db.collection("Subscriptions")
+    .find({})
+    .toArray()
+    .then((subscriptions) => sendNotifications(subscriptions, id));
 });
 
 function sendNotifications(subscriptions, id) {
@@ -284,11 +225,14 @@ function sendNotifications(subscriptions, id) {
 }
 
 function connectToDb(callback) {
-  dbo.connectToServer((err, _db) => {
-    if (err) console.error(err);
-    db = _db;
-    if (callback) callback();
-  });
+  if (dbConnected) db = dbo.getDb;
+  else
+    dbo.connectToServer((err, _db) => {
+      if (err) console.error(err);
+      db = _db;
+      dbConnected = true;
+    });
+  if (callback) callback();
 }
 
 app.listen(port, function () {
