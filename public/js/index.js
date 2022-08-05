@@ -91,7 +91,10 @@ $(document).ready(() => {
 
 function loadPostData(postTemplate, postsContainer, tagTemplate) {
   fetch("/api/getPosts")
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status == 200) return res.json();
+      else loadPostData(postTemplate, postsContainer, tagTemplate);
+    })
     .then((posts) => {
       console.log(posts);
       postsData = posts.map((post) => {
