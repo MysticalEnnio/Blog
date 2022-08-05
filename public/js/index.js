@@ -88,6 +88,7 @@ $(document).ready(() => {
   });
   console.log("s2");
   $.get("/api/getPosts", (posts) => {
+    console.log("s3");
     alert(posts == "");
     postsData = posts.map((post) => {
       let postCard = postTemplate.content.cloneNode(true).children[0];
