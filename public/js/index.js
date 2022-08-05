@@ -36,7 +36,7 @@ async function send() {
     })
     .then(function (registration) {
       console.log(registration);
-      console.log(this);
+      console.log(JSON.stringify(this));
       //register push
       registration.pushManager
         .subscribe({
