@@ -35,7 +35,8 @@ async function send() {
       scope: "/",
     })
     .then(function (registration) {
-      console.log(registration.pushManager);
+      console.log(registration);
+      console.log(window.pushManager);
       //register push
       registration.pushManager
         .subscribe({
