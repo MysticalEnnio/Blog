@@ -45,6 +45,13 @@ app.use(fileUpload());
 app.post("/subscribe", (req, res) => {
   //get push subscription object from the request
   const subscription = req.body;
+  if (db != undefined) {
+    db.collection("Subscriptions").insertOne(subscription);
+  } else {
+    connectToDb(() => {
+      db.collection("Subscriptions").insertOne(subscription);
+    });
+  }
 
   //send status 201 for the request
   res.status(201).json({});
@@ -147,12 +154,21 @@ app.post("/api/newPost", function (req, res) {
     timestamp: reqData.timestamp,
     content: reqData.content,
   };
+  let subscriptions = [];
 
   if (db != undefined) {
     db.collection("Posts").insertOne(post);
+    db.collection("Subsciptions")
+      .find({})
+      .toArray()
+      .then((subs) => (subscriptions = subs));
   } else {
     connectToDb(() => {
       db.collection("Posts").insertOne(post);
+      db.collection("Subsciptions")
+        .find({})
+        .toArray()
+        .then((subs) => (subscriptions = subs));
     });
   }
 
@@ -163,12 +179,15 @@ app.post("/api/newPost", function (req, res) {
     postId: id,
   });
 
-  console.log("Sending notification");
+  console.log("Sending notification...");
   //pass the object into sendNotification fucntion and catch any error
-  webpush
-    .sendNotification(subscription, payload)
-    .catch((err) => console.error(err));
-  res.send("200");
+  subscriptions.forEach((subscription) => {
+    webpush
+      .sendNotification(subscription, payload)
+      .catch((err) => console.error(err));
+    res.send("200");
+  });
+  console.log("All notifications send");
 });
 
 function connectToDb(callback) {
