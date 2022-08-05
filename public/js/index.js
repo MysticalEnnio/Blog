@@ -84,6 +84,8 @@ $(document).ready(() => {
       post.element.classList.toggle("hide", !isVisible);
     });
   });
+
+  loadPostData();
 });
 
 function loadPostData() {
