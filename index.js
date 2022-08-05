@@ -7,6 +7,7 @@ const crypto = require("crypto");
 var ImageKit = require("imagekit");
 const post = require("./postHandler.js");
 const fs = require("fs");
+const webpush = require("web-push");
 const dbo = require("./db/connection");
 //const CyclicDb = require("cyclic-dynamodb");
 const app = express();
@@ -23,10 +24,39 @@ var imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/mystical/",
 });
 
+//storing the keys in variables
+const publicVapidKey =
+  "BH6sYvnAi9yM8aPtp8lHE0h9Her_ERKt6_XwTKiOA_6L0rUPsipAo-TL30QLj37DrVJkxk0fVCiWskd3sfZnSg0";
+const privateVapidKey = process.env.VAPID_PRIVATE_KEY;
+
+//setting vapid keys details
+webpush.setVapidDetails(
+  "mailto:ennio@mystaredia.de",
+  publicVapidKey,
+  privateVapidKey
+);
+
 app.use(express.static("public"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
+
+//subscribe route
+app.post("/subscribe", (req, res) => {
+  //get push subscription object from the request
+  const subscription = req.body;
+
+  //send status 201 for the request
+  res.status(201).json({});
+
+  //create paylod: specified the detals of the push notification
+  const payload = JSON.stringify({ title: "Section.io Push Notification" });
+
+  //pass the object into sendNotification fucntion and catch any error
+  webpush
+    .sendNotification(subscription, payload)
+    .catch((err) => console.error(err));
+});
 
 app.post("/api/image/uploadFile", function (req, res) {
   imagekit.upload(

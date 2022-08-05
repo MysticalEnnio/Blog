@@ -9,6 +9,48 @@ Copyright © 2021 Ennio Marke
 *************************************************/
 
 const userLang = navigator.language || navigator.userLanguage;
+const publicVapidKey =
+  "BH6sYvnAi9yM8aPtp8lHE0h9Her_ERKt6_XwTKiOA_6L0rUPsipAo-TL30QLj37DrVJkxk0fVCiWskd3sfZnSg0";
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+//register the service worker, register our push api, send the notification
+async function send() {
+  //register service worker
+  const register = await navigator.serviceWorker.register("/sw.js", {
+    scope: "/",
+  });
+
+  //register push
+  const subscription = await register.pushManager.subscribe({
+    userVisibleOnly: true,
+
+    //public vapid key
+    applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+  });
+
+  //Send push notification
+  await fetch("/subscribe", {
+    method: "POST",
+    body: JSON.stringify(subscription),
+    headers: {
+      "content-type": "application/json",
+    },
+  });
+}
 
 $(document).ready(() => {
   const postTemplate = document.querySelector("[data-post-template]");
@@ -119,6 +161,13 @@ $(document).ready(() => {
       });
     });
   });
+
+  //set up service worker for notifications
+
+  //check if the serveice worker can work in the current browser
+  if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
+  }
 });
 
 /*********************************
