@@ -36,9 +36,9 @@ async function send() {
     })
     .then(function (registration) {
       console.log(registration);
-      console.log(window.pushManager);
+      console.log(this);
       //register push
-      /*registration.pushManager
+      registration.pushManager
         .subscribe({
           userVisibleOnly: true,
 
@@ -54,7 +54,7 @@ async function send() {
               "content-type": "application/json",
             },
           });
-        });*/
+        });
     })
     .catch(function (error) {
       alert(
