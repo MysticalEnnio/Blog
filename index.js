@@ -148,6 +148,7 @@ app.post("/api/newPost", function (req, res) {
     postId: id,
   });
 
+  console.log("Sending notification");
   //pass the object into sendNotification fucntion and catch any error
   webpush
     .sendNotification(subscription, payload)
