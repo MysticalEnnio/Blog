@@ -61,16 +61,15 @@ async function send() {
                 applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
               })
               .then((subscription) => {
-                setTimeout(() => {
-                  //Send push notification
-                  fetch("/subscribe", {
-                    method: "POST",
-                    body: JSON.stringify(subscription),
-                    headers: {
-                      "content-type": "application/json",
-                    },
-                  });
-                }, 500);
+                console.log("Subscribed to push service");
+                //Send push notification
+                fetch("/subscribe", {
+                  method: "POST",
+                  body: JSON.stringify(subscription),
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                });
               });
           }
         });
