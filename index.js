@@ -176,7 +176,8 @@ app.get("/api/downloadPost", function (req, res) {
           file,
           JSON.stringify(posts[0]),
           { overwrite: false },
-          function (err) {
+          function (err, data) {
+            console.log("data", data);
             if (err) throw err;
             console.log("It's saved!");
             res.download(`${__dirname}/${file}`);
