@@ -210,7 +210,7 @@ app.post("/api/newPost", function (req, res) {
   connectToDb(() => {
     db.collection("Posts").insertOne(post);
     res.send({ status: 200, id });
-    if (post.summary == "test") return;
+    if (post.summary.toLowerCase() == "test") return;
     db.collection("Subscriptions")
       .find({})
       .toArray()
