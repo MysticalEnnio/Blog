@@ -37,44 +37,44 @@ async function send() {
     .register("/sw.js", {
       scope: "/",
     })
-    .then((registration) => {
-      setTimeout(() => {}, 500);
-      //register push
-      registration.pushManager
-        .subscribe({
-          userVisibleOnly: true,
+    .then((reg) => {
+      var serviceWorker;
+      if (reg.installing) {
+        serviceWorker = reg.installing;
+        // console.log('Service worker installing');
+      } else if (reg.waiting) {
+        serviceWorker = reg.waiting;
+        // console.log('Service worker installed & waiting');
+      } else if (reg.active) {
+        serviceWorker = reg.active;
+        // console.log('Service worker active');
+      }
 
-          //public vapid key
-          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-        })
-        .then(function (reg) {
-          var serviceWorker;
-          if (reg.installing) {
-            serviceWorker = reg.installing;
-            // console.log('Service worker installing');
-          } else if (reg.waiting) {
-            serviceWorker = reg.waiting;
-            // console.log('Service worker installed & waiting');
-          } else if (reg.active) {
-            serviceWorker = reg.active;
-            // console.log('Service worker active');
-          }
+      if (serviceWorker) {
+        serviceWorker.addEventListener("statechange", function (e) {
+          if (e.target.state == "activated") {
+            reg.pushManager
+              .subscribe({
+                userVisibleOnly: true,
 
-          if (serviceWorker) {
-            serviceWorker.addEventListener("statechange", function (e) {
-              if (e.target.state == "activated") {
-                //If push subscription wasnt done yet have to do here
-                fetch("/subscribe", {
-                  method: "POST",
-                  body: JSON.stringify(subscription),
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                });
-              }
-            });
+                //public vapid key
+                applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+              })
+              .then((subscription) => {
+                setTimeout(() => {
+                  //Send push notification
+                  fetch("/subscribe", {
+                    method: "POST",
+                    body: JSON.stringify(subscription),
+                    headers: {
+                      "content-type": "application/json",
+                    },
+                  });
+                }, 500);
+              });
           }
         });
+      }
     })
     .catch(function (error) {
       alert(
