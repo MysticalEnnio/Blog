@@ -171,17 +171,12 @@ app.get("/api/downloadPost", function (req, res) {
       .find({ id: req.query.id })
       .toArray()
       .then((posts) => {
-        const file = `posts/${posts[0].id}.json`;
-        fs.writeFile(
-          file,
-          JSON.stringify(posts[0]),
-          { overwrite: false },
-          function (err) {
-            if (err) throw err;
-            console.log("It's saved!");
-            res.download(`${__dirname}/${file}`);
-          }
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader(
+          "Content-disposition",
+          `attachment; filename=${posts[0].id}.json`
         );
+        res.send(JSON.stringify(posts[0]));
       });
   });
 });
