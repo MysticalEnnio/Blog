@@ -121,7 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((res) => res.json())
           .then((response) => {
-            if (response == "200") window.location.replace("/");
+            if (response.status == "200") {
+              window.open("/api/downloadPost?id=" + response.id);
+              //redirect to start page
+              window.location.href = "/";
+            }
           });
       })
       .catch((error) => {

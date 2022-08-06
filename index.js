@@ -54,7 +54,6 @@ app.post("/subscribe", (req, res) => {
       })
       .toArray()
       .then((data) => {
-        console.log(data);
         if (data.length == 0) {
           db.collection("Subscriptions").insertOne(notificationSubscription);
           //send status 201 for the request
@@ -166,6 +165,27 @@ app.get("/api/getPosts", function (req, res) {
   });
 });
 
+app.get("/api/downloadPost", function (req, res) {
+  connectToDb(() => {
+    db.collection("Posts")
+      .find({ id: req.query.id })
+      .toArray()
+      .then((posts) => {
+        const file = `public/posts/${posts[0].id}.json`;
+        fs.writeFile(
+          file,
+          JSON.stringify(posts[0]),
+          { overwrite: false },
+          function (err) {
+            if (err) throw err;
+            console.log("It's saved!");
+            res.download(`${__dirname}/${file}`);
+          }
+        );
+      });
+  });
+});
+
 app.get("/api/deleteTestPosts", function (req, res) {
   connectToDb(() => {
     db.collection("Posts").deleteMany({ summary: "test" });
@@ -192,9 +212,9 @@ app.post("/api/newPost", function (req, res) {
     content: reqData.content,
   };
 
-  res.send("200");
   connectToDb(() => {
     db.collection("Posts").insertOne(post);
+    res.send({ status: 200, id });
     if (post.summary == "test") return;
     db.collection("Subscriptions")
       .find({})
