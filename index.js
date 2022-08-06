@@ -220,6 +220,7 @@ app.post("/api/newPost", function (req, res) {
 
 app.get("/api/notificationTest", function (req, res) {
   connectToDb(() => {
+    res.sendStatus(200);
     db.collection("Subscriptions")
       .find({})
       .toArray()
