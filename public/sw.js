@@ -14,8 +14,8 @@ self.addEventListener("push", (e) => {
   }, 100);
 });
 
-self.addEventListener("notificationclick", function (event) {
-  const data = e.data.json();
+self.onnotificationclick(function (event) {
+  const data = event.data.json();
   fetch("api/seenNotification?id=" + data.postId);
   event.waitUntil(
     clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId)
