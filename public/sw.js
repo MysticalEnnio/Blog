@@ -14,10 +14,10 @@ self.addEventListener("push", (e) => {
   }, 100);
 });
 
-self.onnotificationclick(function (event) {
-  const data = event.data.json();
+self.addEventListener("notificationclick", function (e) {
+  const data = e.data.json();
   fetch("api/seenNotification?id=" + data.postId);
-  event.waitUntil(
+  e.waitUntil(
     clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId)
   );
 });
