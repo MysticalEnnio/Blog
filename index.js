@@ -171,7 +171,7 @@ app.get("/api/downloadPost", function (req, res) {
       .find({ id: req.query.id })
       .toArray()
       .then((posts) => {
-        const file = `public/posts/${posts[0].id}.json`;
+        const file = `/public/posts/${posts[0].id}.json`;
         fs.writeFile(
           file,
           JSON.stringify(posts[0]),
