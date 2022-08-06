@@ -47,28 +47,21 @@ app.post("/subscribe", (req, res) => {
   //get push subscription object from the request
   const notificationSubscription = req.body;
 
-  db.collection("Subscriptions")
-    .find({
-      endpoint: notificationSubscription.endpoint,
-    })
-    .toArray()
-    .then((data) => console.log);
-
-  connectToDb();
-  db.collection("Subscriptions")
-    .find({
-      endpoint: notificationSubscription.endpoint,
-    })
-    .toArray()
-    .then((data) => {
-      console.log(data);
-      if (data.length == 0) {
-        db.collection("Subscriptions").insertOne(notificationSubscription);
-      }
-    });
-
-  //send status 201 for the request
-  res.status(201).json({});
+  connectToDb(() => {
+    db.collection("Subscriptions")
+      .find({
+        endpoint: notificationSubscription.endpoint,
+      })
+      .toArray()
+      .then((data) => {
+        console.log(data);
+        if (data.length == 0) {
+          db.collection("Subscriptions").insertOne(notificationSubscription);
+          //send status 201 for the request
+          res.status(201).json({});
+        }
+      });
+  });
 });
 
 app.post("/api/image/uploadFile", function (req, res) {
@@ -133,47 +126,51 @@ app.get("/api/addTag", function (req, res) {
     res.send("No tag specified");
     return;
   }
-  connectToDb();
-  db.collection("Tags").insertOne({
-    name: req.query.name,
+  connectToDb(() => {
+    db.collection("Tags").insertOne({
+      name: req.query.name,
+    });
+    res.send(200);
   });
-
-  res.send(200);
 });
 
 app.get("/api/getTags", function (req, res) {
-  connectToDb();
-  db.collection("Tags")
-    .find({})
-    .toArray()
-    .then((tags) => res.send(tags));
+  connectToDb(() => {
+    db.collection("Tags")
+      .find({})
+      .toArray()
+      .then((tags) => res.send(tags));
+  });
 });
 
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
-    connectToDb();
-    db.collection("Posts")
-      .find({ id: req.query.id })
-      .toArray()
-      .then((posts) => post.show(posts[0], res));
+    connectToDb(() => {
+      db.collection("Posts")
+        .find({ id: req.query.id })
+        .toArray()
+        .then((posts) => post.show(posts[0], res));
+    });
   } else {
     res.redirect("/");
   }
 });
 
 app.get("/api/getPosts", function (req, res) {
-  connectToDb();
-  db.collection("Posts")
-    .find({})
-    .toArray()
-    .then((posts) => res.send(posts));
+  connectToDb(() => {
+    db.collection("Posts")
+      .find({})
+      .toArray()
+      .then((posts) => res.send(posts));
+  });
 });
 
 app.get("/api/deleteTestPosts", function (req, res) {
-  connectToDb();
-  db.collection("Posts").deleteMany({ summary: "test" });
-  res.sendStatus(200);
+  connectToDb(() => {
+    db.collection("Posts").deleteMany({ summary: "test" });
+    res.sendStatus(200);
+  });
 });
 
 app.post("/api/newPost", function (req, res) {
@@ -196,13 +193,14 @@ app.post("/api/newPost", function (req, res) {
   };
 
   res.send("200");
-  connectToDb(callback);
-  db.collection("Posts").insertOne(post);
-  if (post.summary == "test") return;
-  db.collection("Subscriptions")
-    .find({})
-    .toArray()
-    .then((subscriptions) => sendNotifications(subscriptions, id));
+  connectToDb(() => {
+    db.collection("Posts").insertOne(post);
+    if (post.summary == "test") return;
+    db.collection("Subscriptions")
+      .find({})
+      .toArray()
+      .then((subscriptions) => sendNotifications(subscriptions, id));
+  });
 });
 
 function sendNotifications(subscriptions, id) {
@@ -225,14 +223,20 @@ function sendNotifications(subscriptions, id) {
 }
 
 function connectToDb(callback) {
-  if (dbConnected) db = dbo.getDb;
-  else
+  if (db) {
+    if (callback) callback();
+    return;
+  }
+  if (dbConnected) {
+    db = dbo.getDb;
+    if (callback) callback();
+  } else
     dbo.connectToServer((err, _db) => {
       if (err) console.error(err);
       db = _db;
       dbConnected = true;
+      if (callback) callback();
     });
-  if (callback) callback();
 }
 
 app.listen(port, function () {

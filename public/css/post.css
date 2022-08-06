@@ -100,6 +100,15 @@ a:hover::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 4vmin;
+}
+
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 100% !important;
+}
+.cdx-block {
+  max-width: 100% !important;
 }
 
 #search {
@@ -133,7 +142,7 @@ a:hover::before {
 }
 
 #postHeading {
-  font-size: 2.5rem;
+  font-size: 7vmin;
 }
 
 #postTags {
