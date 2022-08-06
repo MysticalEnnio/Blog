@@ -21,3 +21,5 @@ self.addEventListener("notificationclick", function (event) {
     clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId)
   );
 });
+
+console.log(self);
