@@ -101,6 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
           alert("Please add at least one tag");
           return;
         }
+        if (document.getElementById("summary").value == "") {
+          alert("Please add a summary");
+          return;
+        }
         console.log("Article data: ", outputData);
         let postBody = JSON.stringify({
           timestamp: outputData.time,
