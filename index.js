@@ -183,7 +183,7 @@ app.get("/api/downloadPost", function (req, res) {
 
 app.get("/api/deleteTestPosts", function (req, res) {
   connectToDb(() => {
-    db.collection("Posts").deleteMany({ summary: "test" });
+    db.collection("Posts").deleteMany({ summary: /^test$/i });
     res.sendStatus(200);
   });
 });
