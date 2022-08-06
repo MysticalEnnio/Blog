@@ -10,3 +10,9 @@ self.addEventListener("push", (e) => {
     icon: "https://pixabay.com/vectors/bell-notification-communication-1096280/",
   });
 });
+
+self.addEventListener("notificationclick", function (event) {
+  const data = e.data.json();
+  event.notification.close();
+  clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId);
+});
