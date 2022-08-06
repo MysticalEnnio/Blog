@@ -228,6 +228,10 @@ app.get("/api/notificationTest", function (req, res) {
   });
 });
 
+app.get("/api/seenNotification", function (req, res) {
+  console.log("seenNotification: " + req.query.id);
+});
+
 function sendNotifications(subscriptions, id) {
   console.log(subscriptions);
   //create paylod: specified the detals of the push notification
