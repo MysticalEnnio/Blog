@@ -48,14 +48,16 @@ async function send() {
           applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
         })
         .then((subscription) => {
-          //Send push notification
-          fetch("/subscribe", {
-            method: "POST",
-            body: JSON.stringify(subscription),
-            headers: {
-              "content-type": "application/json",
-            },
-          });
+          setTimeout(() => {
+            //Send push notification
+            fetch("/subscribe", {
+              method: "POST",
+              body: JSON.stringify(subscription),
+              headers: {
+                "content-type": "application/json",
+              },
+            });
+          }, 500);
         });
     })
     .catch(function (error) {
