@@ -148,19 +148,17 @@ app.get("/api/getTags", function (req, res) {
 });
 
 app.get("/post", function (req, res) {
-  checkAccount(req, res, () => {
-    console.log("post: " + req.query.id);
-    if (req.query.id) {
-      connectToDb(() => {
-        db.collection("Posts")
-          .find({ id: req.query.id })
-          .toArray()
-          .then((posts) => post.show(posts[0], res));
-      });
-    } else {
-      res.redirect("/");
-    }
-  });
+  console.log("post: " + req.query.id);
+  if (req.query.id) {
+    connectToDb(() => {
+      db.collection("Posts")
+        .find({ id: req.query.id })
+        .toArray()
+        .then((posts) => post.show(posts[0], res));
+    });
+  } else {
+    res.redirect("/");
+  }
 });
 
 app.get("/api/getPosts", function (req, res) {
