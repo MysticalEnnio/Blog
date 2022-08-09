@@ -84,7 +84,52 @@ async function send() {
     });
 }
 
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
 $(document).ready(() => {
+  (async () => {
+    if (
+      document.cookie.includes("password=") &&
+      document.cookie.includes("id=")
+    ) {
+      fetch("/api/verifyId", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: getCookie("password"),
+          id: getCookie("id"),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.status == 400) {
+            console.log("Error: " + data.status + "\n" + data.message);
+            window.location.href = "/login";
+          }
+        });
+    } else {
+      console.log("No password or id cookie");
+      window.location.href = "/login";
+    }
+  })();
+
   const postTemplate = document.querySelector("[data-post-template]");
   const tagTemplate = document.querySelector("[data-tag-template]");
   const postsContainer = $("#posts");

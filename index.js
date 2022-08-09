@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
 var ImageKit = require("imagekit");
@@ -24,6 +25,7 @@ var imagekit = new ImageKit({
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
   urlEndpoint: "https://ik.imagekit.io/mystical/",
 });
+let authorizedUsers = [];
 
 //storing the keys in variables
 const publicVapidKey =
@@ -37,10 +39,11 @@ webpush.setVapidDetails(
   privateVapidKey
 );
 
-app.use(express.static("public"));
+app.use(cookieParser());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
+app.use(express.static("public"));
 
 //subscribe route
 app.post("/subscribe", (req, res) => {
@@ -62,6 +65,8 @@ app.post("/subscribe", (req, res) => {
       });
   });
 });
+
+app.all("/api/ping", (req, res) => res.send("pong"));
 
 app.post("/api/image/uploadFile", function (req, res) {
   imagekit.upload(
@@ -143,20 +148,23 @@ app.get("/api/getTags", function (req, res) {
 });
 
 app.get("/post", function (req, res) {
-  console.log("post: " + req.query.id);
-  if (req.query.id) {
-    connectToDb(() => {
-      db.collection("Posts")
-        .find({ id: req.query.id })
-        .toArray()
-        .then((posts) => post.show(posts[0], res));
-    });
-  } else {
-    res.redirect("/");
-  }
+  checkAccount(req, res, () => {
+    console.log("post: " + req.query.id);
+    if (req.query.id) {
+      connectToDb(() => {
+        db.collection("Posts")
+          .find({ id: req.query.id })
+          .toArray()
+          .then((posts) => post.show(posts[0], res));
+      });
+    } else {
+      res.redirect("/");
+    }
+  });
 });
 
 app.get("/api/getPosts", function (req, res) {
+  console.log("getPosts");
   connectToDb(() => {
     db.collection("Posts")
       .find({})
@@ -231,6 +239,124 @@ app.get("/api/notificationTest", function (req, res) {
 app.get("/api/seenNotification", function (req, res) {
   console.log("seenNotification: " + req.query.id);
 });
+
+app.post("/api/login", function (req, res) {
+  /*
+  1: Check if name, password, and email are provided
+  2: Check if account exists with email or name
+    2.2: Check if password, name and email is correct
+      2.2.2: If one wrong, send error
+      2.2.3: If all correct, send success and id
+  3: If account does not exist create account and send success and id
+  */
+  let reqData = req.body;
+  if (!reqData.name) {
+    res.send({ status: 400, message: "missing name" });
+    return;
+  }
+  if (!reqData.password) {
+    res.send({ status: 400, message: "missing password" });
+    return;
+  }
+  if (!reqData.email) {
+    res.send({ status: 400, message: "missing email" });
+    return;
+  }
+  console.log("all data provided");
+  setTimeout(() => {
+    connectToDb(() => {
+      console.log("connected to db");
+      db.collection("Users")
+        .find({ $or: [{ email: reqData.email }, { name: reqData.name }] })
+        .toArray()
+        .then((users) => {
+          if (users.length == 0) {
+            console.log("no user found");
+            //create account
+            let id = crypto
+              .createHash("md5")
+              .update(reqData.name)
+              .digest("hex");
+            db.collection("Users").insertOne({
+              id: id,
+              name: reqData.name,
+              email: reqData.email,
+              password: reqData.password,
+            });
+            res.send({ status: 200, id });
+          } else {
+            //check if email is correct
+            if (users[0].email != reqData.email) {
+              console.log("email wrong");
+              res.send({ status: 400, message: "wrong email" });
+              return;
+            }
+            //check if name is correct
+            if (users[0].name != reqData.name) {
+              console.log("name wrong");
+              res.send({ status: 400, message: "wrong name" });
+              return;
+            }
+            //check if password is correct
+            if (users[0].password == reqData.password) {
+              console.log("password correct");
+              res.send({ status: 200, id: users[0].id });
+            }
+          }
+        });
+    });
+  }, 1000);
+});
+
+app.post("/api/verifyId", function (req, res) {
+  console.log("verifyId");
+  /*
+  1: Check if id is provided
+  2: Check if password is provided
+  3: call verifyId
+  */
+  let reqData = req.body;
+  if (!reqData.id) res.send({ status: 400, message: "missing id" });
+  if (!reqData.password) res.send({ status: 400, message: "missing password" });
+  verifyId(reqData.id, reqData.password, (resData) => res.send(resData));
+});
+
+function verifyId(id, password, callback) {
+  /*
+  1: Check if account exists with id
+    1.2: Check if password is correct
+      1.2.2: If wrong, send error
+      1.2.3: If correct, send success
+  2: If account does not exist send error
+  */
+  if (!authorizedUsers.includes(id)) {
+    connectToDb(() => {
+      db.collection("Users")
+        .find({ id: id })
+        .toArray()
+        .then((users) => {
+          if (users.length == 0) {
+            callback({ status: 400, message: "wrong id" });
+          } else {
+            console.log(
+              "password: " +
+                password +
+                "\nusers[0].password: " +
+                users[0].password
+            );
+            if (users[0].password == password) {
+              authorizedUsers.push(id);
+              callback({ status: 200 });
+            } else {
+              callback({ status: 400, message: "wrong password" });
+            }
+          }
+        });
+    });
+  } else {
+    callback({ status: 200 });
+  }
+}
 
 function sendNotifications(subscriptions, id) {
   console.log(subscriptions);
