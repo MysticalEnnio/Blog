@@ -154,7 +154,7 @@ app.get("/post", function (req, res) {
       db.collection("Posts")
         .find({ id: req.query.id })
         .toArray()
-        .then((posts) => post.show(posts[0], res));
+        .then((posts) => post.show(posts[0], res, req.query.lang));
     });
   } else {
     res.redirect("/");
@@ -336,12 +336,6 @@ function verifyId(id, password, callback) {
           if (users.length == 0) {
             callback({ status: 400, message: "wrong id" });
           } else {
-            console.log(
-              "password: " +
-                password +
-                "\nusers[0].password: " +
-                users[0].password
-            );
             if (users[0].password == password) {
               authorizedUsers.push(id);
               callback({ status: 200 });

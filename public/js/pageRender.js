@@ -1,33 +1,14 @@
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == " ") {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   (async () => {
-    if (
-      document.cookie.includes("password=") &&
-      document.cookie.includes("id=")
-    ) {
+    if (localStorage.getItem("password") && localStorage.getItem("id")) {
       fetch("/api/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: getCookie("password"),
-          id: getCookie("id"),
+          password: localStorage.getItem("password"),
+          id: localStorage.getItem("id"),
         }),
       })
         .then((response) => response.json())
@@ -39,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
     } else {
-      console.log("No password or id cookie");
+      console.log("No password or id saved in local storage");
       window.location.href = "/login";
     }
   })();

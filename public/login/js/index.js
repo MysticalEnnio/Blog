@@ -26,11 +26,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
       .then((data) => {
         console.log(data.status);
         if (data.status == 200) {
-          //save name, email, password and id to cookies
-          document.cookie = `name=${name.value}; path=/`;
-          document.cookie = `email=${email.value}; path=/`;
-          document.cookie = `password=${password.value}; path=/`;
-          document.cookie = `id=${data.id}; path=/`;
+          //save name, email, password and id to local storage
+          localStorage.setItem("name", name.value);
+          localStorage.setItem("email", email.value);
+          localStorage.setItem("password", password.value);
+          localStorage.setItem("id", data.id);
           //redirect to Home page
           window.location.href = "/";
         } else {

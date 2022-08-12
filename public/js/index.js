@@ -84,36 +84,17 @@ async function send() {
     });
 }
 
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == " ") {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
 $(document).ready(() => {
   (async () => {
-    if (
-      document.cookie.includes("password=") &&
-      document.cookie.includes("id=")
-    ) {
+    if (localStorage.getItem("password") && localStorage.getItem("id")) {
       fetch("/api/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: getCookie("password"),
-          id: getCookie("id"),
+          password: localStorage.getItem("password"),
+          id: localStorage.getItem("id"),
         }),
       })
         .then((response) => response.json())
@@ -125,7 +106,7 @@ $(document).ready(() => {
           }
         });
     } else {
-      console.log("No password or id cookie");
+      console.log("No password or id saved in local storage");
       window.location.href = "/login";
     }
   })();
@@ -163,13 +144,15 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
     })
     .then((posts) => {
       if (posts == undefined) return;
+      let lang = localStorage.getItem("language")??="de";
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
         postCard.querySelector("[data-heading]").firstChild.textContent =
           post.heading;
-        postCard.querySelector("[data-heading]").firstChild.href =
-          "/post?id=" + post.id;
+        postCard.querySelector(
+          "[data-heading]"
+        ).firstChild.href = `/post?id=${post.id}&lang=${lang}`;
         postCard.querySelector("[data-date]").textContent = new Date(
           post.timestamp * 1
         ).toLocaleDateString(undefined, {
@@ -186,7 +169,9 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
           tagEl.textContent = tag;
           postTags.appendChild(tagEl);
         });
-        postCard.querySelector("[data-more]").href = "/post?id=" + post.id;
+        postCard.querySelector(
+          "[data-more]"
+        ).href = `/post?id=${post.id}&lang=${lang}`;
 
         postsContainer.append(postCard);
 
@@ -246,6 +231,37 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
           post.element.classList.toggle("hide", !isVisible);
         });
       });
+
+      //event listeners for settings menu
+      $(".sl-nav li ul")
+        .children()
+        .each(function () {
+          if (
+            this.querySelector("[language]").getAttribute("language") == lang
+          ) {
+            this.querySelector("[language]").classList.add("active");
+            $(".sl-nav li b").text(this.querySelector("[language]").innerHTML);
+          }
+        });
+      $("#settingsButton").click((e) => {
+        $("#settingsMenu").toggleClass("show");
+      });
+      $(".sl-nav li ul li span").click((e) => {
+        $(".sl-nav li ul li span").removeClass("active");
+        e.target.classList.add("active");
+        $(".sl-nav li b").text(e.target.innerHTML);
+        localStorage.setItem("language", e.target.getAttribute("language"));
+        postsContainer.children().each(function () {
+          let postHref = this.querySelector("[data-more]").href;
+          let newHref = `${postHref.slice(
+            0,
+            postHref.indexOf("&")
+          )}&lang=${e.target.getAttribute("language")}`;
+          this.querySelector("[data-more]").href = newHref;
+          this.querySelector("[data-heading]").firstChild.href = newHref;
+        });
+      });
+
       //set up service worker for notifications
 
       //check if the serveice worker can work in the current browser

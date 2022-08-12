@@ -87,6 +87,32 @@ function loadTags() {
 
 //Wait for dom to load
 document.addEventListener("DOMContentLoaded", () => {
+  (async () => {
+    if (localStorage.getItem("password") && localStorage.getItem("id")) {
+      fetch("/api/verifyId", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: localStorage.getItem("password"),
+          id: localStorage.getItem("id"),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.status == 400) {
+            console.log("Error: " + data.status + "\n" + data.message);
+            window.location.href = "/login";
+          }
+        });
+    } else {
+      console.log("No password or id saved in local storage");
+      window.location.href = "/login";
+    }
+  })();
+
   loadTags();
 
   document.getElementById("save").addEventListener("click", () => {

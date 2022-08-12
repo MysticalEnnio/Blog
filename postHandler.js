@@ -4,9 +4,9 @@ const ejs = require("ejs");
 const translatte = require("translatte");
 
 module.exports = {
-  show: function (postData, res) {
+  show: function (postData, res, lang = "de") {
     finishedTranslations = 0;
-    translatte(postData.heading, { to: "de" })
+    translatte(postData.heading, { to: lang })
       .then((res) => {
         postData.heading = res.text;
         finishedTranslations++;
@@ -15,7 +15,7 @@ module.exports = {
         console.error(err);
       });
     postData.content.forEach((element) => {
-      translatte(element.data.text || element.data.caption, { to: "de" })
+      translatte(element.data.text || element.data.caption, { to: lang })
         .then((res) => {
           if (element.data.text) element.data.text = res.text;
           else element.data.caption = res.text;
