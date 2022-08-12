@@ -144,7 +144,8 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
     })
     .then((posts) => {
       if (posts == undefined) return;
-      let lang = localStorage.getItem("language")??="de";
+      let lang = localStorage.getItem("language");
+      lang ??= "de";
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
