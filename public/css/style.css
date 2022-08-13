@@ -86,6 +86,7 @@ a {
   position: relative;
   color: var(--heading-color);
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover {
@@ -185,6 +186,15 @@ a:hover::before {
 
 #profilePictureInput {
   display: none;
+}
+
+#logout {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 16px;
+  cursor: pointer;
+  color: var(--text-color);
 }
 
 .sl-nav {
