@@ -278,15 +278,21 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
     .catch((err) => console.error(err));
   navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
     (async () => {
-      if (!localStorage.getItem("namedNotifications"))
+      if (!localStorage.getItem("namedNotifications")) {
+        let subscription =
+          await serviceWorkerRegistration.pushManager.getSubscription();
+        console.log(subscription);
         fetch("/api/addNotificationName", {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            subscription:
-              serviceWorkerRegistration.pushManager.getSubscription(),
+            subscription,
             userId: localStorage.getItem("id"),
           }),
         });
+      }
     })();
   });
 }
