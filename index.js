@@ -72,8 +72,8 @@ app.all("/api/ping", (req, res) => res.send("pong"));
 app.post("/api/image/uploadFile", function (req, res) {
   imagekit.upload(
     {
-      file: req.files.image.data, //required
-      fileName: req.files.image.md5, //required
+      file: req.files.file.data, //required
+      fileName: req.files.file.md5, //required
       overwriteFile: true,
       useUniqueFileName: false,
       tags: ["usa-blog"],
@@ -87,41 +87,7 @@ app.post("/api/image/uploadFile", function (req, res) {
       } else {
         console.log(result);
         res.send({
-          success: 1,
-          file: {
-            url: result.url,
-            // ... and any additional fields you want to store, such as width, height, color, extension, etc
-          },
-        });
-      }
-    }
-  );
-});
-
-app.post("/api/image/uploadUrl", function (req, res) {
-  imagekit.upload(
-    {
-      file: req.body.url, //required
-      fileName: req.body.url.slice(
-        req.body.url.lastIndexOf("/"),
-        req.body.url.length
-      ), //required
-      tags: ["usa-blog"],
-    },
-    function (error, result) {
-      if (error) {
-        console.log(error);
-        res.send({
-          success: 0,
-        });
-      } else {
-        console.log(result);
-        res.send({
-          success: 1,
-          file: {
-            url: result.url,
-            // ... and any additional fields you want to store, such as width, height, color, extension, etc
-          },
+          location: result.url,
         });
       }
     }
@@ -204,10 +170,22 @@ app.get("/api/deleteTestPosts", function (req, res) {
 app.post("/api/newPost", function (req, res) {
   console.log("newPost");
   let reqData = req.body;
-  if (!reqData.author) res.send("missing author");
-  if (!reqData.heading) res.send("missing heading");
-  if (!reqData.summary) res.send("missing summary");
-  if (!reqData.content) res.send("missing content");
+  if (!reqData.author) {
+    res.send({ status: 400, message: "missing author" });
+    return;
+  }
+  if (!reqData.heading) {
+    res.send({ status: 400, message: "missing heading" });
+    return;
+  }
+  if (!reqData.summary) {
+    res.send({ status: 400, message: "missing summary" });
+    return;
+  }
+  if (!reqData.content) {
+    res.send({ status: 400, message: "missing content" });
+    return;
+  }
   console.log(reqData);
   let id = crypto.createHash("md5").update(reqData.heading).digest("hex");
   let post = {

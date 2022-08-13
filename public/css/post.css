@@ -61,6 +61,11 @@ body {
   max-width: 800px;
 }
 
+img {
+  width: 100%;
+  height: auto;
+}
+
 a {
   position: relative;
   color: var(--header-color);

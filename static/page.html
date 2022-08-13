@@ -24,6 +24,7 @@ Copyright © 2021 Ennio Marke
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
   <script type="text/javascript">
     const postData = JSON.parse(`<%- postData %>`);
+    const postContent = <%- postContent %>;
   </script>
   <script src="js/pageRender.js"></script>
   <title></title>
@@ -40,7 +41,12 @@ Copyright © 2021 Ennio Marke
     <div id="postContent" data-content></div>
     <div id="postComments">
       <hr>
-      <div style="height: 100vh;"></div>
+      <div style="height: 100vh;">
+        <div id="newCommentWrapper">
+          <textarea
+            id="mytextarea"><p>To insert a 🙂 emoji, either:</p><ul><li>Type a colon followed by a keyword, e.g., <code>:smile</code>, then press <em>Enter</em> or&nbsp;<em>Return</em> to add the highlighted emoji, or click the desired emoji from those displayed, or</li><li>Select the emoticons toolbar button to open the picker, and use the tabs or search bar to browse, then click the desired emoji</li></ul><p>Try it here!&nbsp;</p></textarea>
+        </div>
+      </div>
     </div>
   </div>
 </body>

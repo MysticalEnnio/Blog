@@ -38,7 +38,13 @@ module.exports = {
     if (lang == "en") {
       res.send(
         ejs.render(html, {
-          postData: JSON.stringify(postData),
+          postData: JSON.stringify({
+            id: postData.id,
+            heading: postData.heading,
+            timestamp: postData.timestamp,
+            tags: postData.tags,
+          }),
+          postContent: JSON.stringify(postData.content),
         })
       );
       return;
@@ -51,44 +57,41 @@ module.exports = {
           if (
             result?.translations.filter((t) => t.language == lang).length > 0
           ) {
+            postData = result?.translations.filter((t) => t.language == lang)[0]
+              .postData;
             res.send(
               ejs.render(html, {
-                postData: JSON.stringify(
-                  result?.translations.filter((t) => t.language == lang)[0]
-                    .postData
-                ),
+                postData: JSON.stringify({
+                  id: postData.id,
+                  heading: postData.heading,
+                  timestamp: postData.timestamp,
+                  tags: postData.tags,
+                }),
+                postContent: JSON.stringify(postData.content),
               })
             );
             return;
           }
-          finishedTranslations = 0;
           translate(postData.heading, lang)
             .then((res) => {
               postData.heading = res.data.translations.translatedText;
-              finishedTranslations++;
+              return translate(postData.content, lang);
             })
-            .catch((err) => {
-              console.error(err);
-            });
-          postData.content.forEach((element) => {
-            translate(element.data.text || element.data.caption, lang)
-              .then((res) => {
-                if (element.data.text)
-                  element.data.text = res.data.translations.translatedText;
-                else
-                  element.data.caption = res.data.translations.translatedText;
-                finishedTranslations++;
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          });
-
-          let interval = setInterval(() => {
-            if (finishedTranslations > postData.content.length) {
-              clearInterval(interval);
+            .then((res) => {
+              postData.content = res.data.translations.translatedText;
+              return;
+            })
+            .then(() => {
               res.send(
-                ejs.render(html, { postData: JSON.stringify(postData) })
+                ejs.render(html, {
+                  postData: JSON.stringify({
+                    id: postData.id,
+                    heading: postData.heading,
+                    timestamp: postData.timestamp,
+                    tags: postData.tags,
+                  }),
+                  postContent: JSON.stringify(postData.content),
+                })
               );
               /*
               save post translation to database
@@ -144,8 +147,10 @@ module.exports = {
                     });
                   }
                 });
-            }
-          }, 50);
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         });
     });
   },

@@ -83,7 +83,6 @@ a::before {
   transition: transform 0.3s ease;
 }
 
-#editor,
 #tags,
 #summary {
   border: var(--text-color-2) solid 2px;
