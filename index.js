@@ -150,7 +150,11 @@ app.get("/api/getTags", function (req, res) {
 
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
-  if (req.query.id && !req.query.id == "test") {
+  if (req.query.id) {
+    if (req.query.id == "test") {
+      res.redirect("/");
+      return;
+    }
     connectToDb(() => {
       db.collection("Posts")
         .find({ id: req.query.id })
