@@ -161,7 +161,7 @@ app.get("/post", function (req, res) {
       db.collection("Posts")
         .find({ id: req.query.id })
         .toArray()
-        .then((posts) => post.show(posts[0], res, req.query.lang));
+        .then((posts) => post.show(posts[0], res, req.query.lang, connectToDb));
     });
   } else {
     res.redirect("/");
