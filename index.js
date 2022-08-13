@@ -479,9 +479,11 @@ function connectToDb(callback) {
     if (callback) callback(db);
   } else
     dbo.connectToServer((err, _db) => {
-      if (err) console.error(err);
-      connectToDb(callback);
-      return;
+      if (err) {
+        console.error(err);
+        connectToDb(callback);
+        return;
+      }
       db = _db;
       dbConnected = true;
       if (callback) callback(db);
