@@ -138,6 +138,7 @@ a:hover::before {
   transform: translateX(300px);
   transition: transform 0.5s ease;
   display: flex;
+  z-index: 9999;
 }
 
 #settingsButtonWrapper {
@@ -156,7 +157,6 @@ a:hover::before {
 
 #settings {
   width: 340px;
-  z-index: 9999;
   background: var(--accent-color);
   display: flex;
   flex-direction: column;
@@ -292,7 +292,6 @@ a:hover::before {
   outline: none;
   transition: border 0.2s ease-out, outline 0.1s ease-out;
   position: relative;
-  z-index: -1;
 }
 
 #search:hover,

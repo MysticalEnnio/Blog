@@ -7,6 +7,7 @@ const fileUpload = require("express-fileupload");
 const crypto = require("crypto");
 var ImageKit = require("imagekit");
 const post = require("./postHandler.js");
+const comment = require("./commentSystem.js");
 const fs = require("fs");
 const webpush = require("web-push");
 const dbo = require("./db/connection");
@@ -149,7 +150,7 @@ app.get("/api/getTags", function (req, res) {
 
 app.get("/post", function (req, res) {
   console.log("post: " + req.query.id);
-  if (req.query.id) {
+  if (req.query.id && !req.query.id == "test") {
     connectToDb(() => {
       db.collection("Posts")
         .find({ id: req.query.id })
@@ -224,13 +225,80 @@ app.post("/api/newPost", function (req, res) {
   });
 });
 
+app.post("/api/addComment", function (req, res) {
+  let reqData = req.body;
+  if (!reqData.postId) {
+    res.send({ status: 400, message: "missing post id" });
+    return;
+  }
+  if (!reqData.comment) {
+    res.send({ status: 400, message: "missing comment" });
+    return;
+  }
+  if (!reqData.author) {
+    res.send({ status: 400, message: "missing author" });
+    return;
+  }
+  comment.add(connectToDb, crypto, res, reqData);
+});
+
+app.post("/api/deleteComment", function (req, res) {
+  let reqData = req.body;
+  if (!reqData.postId) {
+    res.send({ status: 400, message: "missing post id" });
+    return;
+  }
+  if (!reqData.commentId) {
+    res.send({ status: 400, message: "missing comment id" });
+    return;
+  }
+  if (!reqData.userId) {
+    res.send({ status: 400, message: "missing user id" });
+    return;
+  }
+  if (!reqData.password) {
+    res.send({ status: 400, message: "missing password" });
+    return;
+  }
+  comment.delete(connectToDb, res, reqData);
+});
+
+app.get("/api/makeAdmin", function (req, res) {
+  if (!req.query.id) {
+    res.send("No id specified");
+    return;
+  }
+  connectToDb(() => {
+    db.collection("Users").updateOne(
+      { id: req.query.id },
+      { $set: { admin: true } }
+    );
+    res.send(200);
+  });
+});
+
 app.get("/api/notificationTest", function (req, res) {
   connectToDb(() => {
     res.sendStatus(200);
     db.collection("Subscriptions")
       .find({})
       .toArray()
-      .then((subscriptions) => sendNotifications(subscriptions, "test"));
+      .then((subscriptions) => {
+        const payload = JSON.stringify({
+          title: "Benachrichtigungstest",
+          message: "Bitte diesen test ignorieren",
+          postId: "test",
+        });
+        console.log("Sending notification...");
+        //pass the object into sendNotification fucntion and catch any error
+        subscriptions.forEach((subscription) => {
+          webpush
+            .sendNotification(subscription, payload)
+            .then((data) => console.log(data))
+            .catch((err) => console.error(err));
+        });
+        console.log("All notifications send");
+      });
   });
 });
 
@@ -371,18 +439,18 @@ function sendNotifications(subscriptions, id) {
 
 function connectToDb(callback) {
   if (db) {
-    if (callback) callback();
+    if (callback) callback(db);
     return;
   }
   if (dbConnected) {
     db = dbo.getDb;
-    if (callback) callback();
+    if (callback) callback(db);
   } else
     dbo.connectToServer((err, _db) => {
       if (err) console.error(err);
       db = _db;
       dbConnected = true;
-      if (callback) callback();
+      if (callback) callback(db);
     });
 }
 

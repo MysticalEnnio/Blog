@@ -13,6 +13,10 @@ self.addEventListener("push", (e) => {
 });
 
 self.addEventListener("notificationclick", function (e) {
+  if (data.postId == "test") {
+    e.notification.close();
+    return;
+  }
   fetch("api/seenNotification?id=" + data.postId);
   e.waitUntil(
     clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId)

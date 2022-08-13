@@ -65,7 +65,12 @@ async function send() {
                 //Send push notification
                 fetch("/subscribe", {
                   method: "POST",
-                  body: JSON.stringify(subscription),
+                  body: JSON.stringify({
+                    ...subscription,
+                    userId: localStorage.getItem("id"),
+                    userName: localStorage.getItem("name"),
+                    userEmail: localStorage.getItem("email"),
+                  }),
                   headers: {
                     "content-type": "application/json",
                   },
