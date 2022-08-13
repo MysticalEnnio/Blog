@@ -294,8 +294,15 @@ app.get("/api/notificationTest", function (req, res) {
         subscriptions.forEach((subscription) => {
           webpush
             .sendNotification(subscription, payload)
-            .then((data) => console.log(data))
-            .catch((err) => console.error(err));
+            .then((data) => {
+              console.log(data.statusCode);
+            })
+            .catch((err) => {
+              console.error(err.statusCode + ": " + err.body);
+              db.collection("Subscriptions").deleteOne({
+                endpoint: subscription.endpoint,
+              });
+            });
         });
         console.log("All notifications send");
       });
@@ -304,6 +311,24 @@ app.get("/api/notificationTest", function (req, res) {
 
 app.get("/api/seenNotification", function (req, res) {
   console.log("seenNotification: " + req.query.id);
+});
+
+app.post("/api/addNotificationName", function (req, res) {
+  let reqData = req.body;
+  connectToDb(() => {
+    db.collection("Subscriptions")
+      .updateOne(
+        {
+          endpoint: reqData.subscription.endpoint,
+        },
+        {
+          $set: {
+            userId: reqData.userId,
+          },
+        }
+      )
+      .then(() => res.send({ status: 200 }));
+  });
 });
 
 app.post("/api/login", function (req, res) {
@@ -431,8 +456,15 @@ function sendNotifications(subscriptions, id) {
   subscriptions.forEach((subscription) => {
     webpush
       .sendNotification(subscription, payload)
-      .then((data) => console.log(data))
-      .catch((err) => console.error(err));
+      .then((data) => {
+        console.log(data.statusCode + ": " + data.body);
+      })
+      .catch((err) => {
+        console.error(err.statusCode + ": " + err.body);
+        db.collection("Subscriptions").deleteOne({
+          endpoint: subscription.endpoint,
+        });
+      });
   });
   console.log("All notifications send");
 }

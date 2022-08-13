@@ -17,7 +17,12 @@ self.addEventListener("notificationclick", function (e) {
     e.notification.close();
     return;
   }
-  fetch("api/seenNotification?id=" + data.postId);
+  fetch(
+    "api/seenNotification?id=" +
+      data.postId +
+      "&userId=" +
+      localStorage.getItem("id")
+  );
   e.waitUntil(
     clients.openWindow("https://blog.mystaredia.de/post?id=" + data.postId)
   );

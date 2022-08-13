@@ -276,6 +276,19 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
       }
     })
     .catch((err) => console.error(err));
+  navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
+    (async () => {
+      if (!localStorage.getItem("namedNotifications"))
+        fetch("/api/addNotificationName", {
+          method: "POST",
+          body: JSON.stringify({
+            subscription:
+              serviceWorkerRegistration.pushManager.getSubscription(),
+            userId: localStorage.getItem("id"),
+          }),
+        });
+    })();
+  });
 }
 
 /*********************************
