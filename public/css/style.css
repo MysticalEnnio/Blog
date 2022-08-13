@@ -168,6 +168,25 @@ a:hover::before {
   margin-top: 48px;
 }
 
+#profilePictureWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#profilePicture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  cursor: pointer;
+}
+
+#profilePictureInput {
+  display: none;
+}
+
 .sl-nav {
   display: inline;
   height: 1em;

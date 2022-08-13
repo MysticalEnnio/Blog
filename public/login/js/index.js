@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
           localStorage.setItem("email", email.value);
           localStorage.setItem("password", password.value);
           localStorage.setItem("id", data.id);
+          if (data.profilePicture)
+            localStorage.setItem("profilePicture", data.profilePicture);
           //redirect to Home page
           window.location.href = "/";
         } else {

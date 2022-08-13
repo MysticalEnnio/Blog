@@ -268,6 +268,40 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
         });
       });
 
+      let profilePicture = localStorage.getItem("profilePicture");
+      if (profilePicture) $("#profilePicture").attr("src", profilePicture);
+
+      const changeProfilePicture = (event) => {
+        const files = event.target.files;
+        const formData = new FormData();
+        formData.append("image", files[0]);
+        formData.append("userId", localStorage.getItem("id"));
+
+        fetch("/api/changeProfilePicture", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            $("#profilePicture").attr("src", data.file.url);
+            localStorage.setItem("profilePicture", data.file.url);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      };
+
+      $("#profilePicture").click(function () {
+        $("#profilePictureInput").click();
+      });
+
+      document
+        .querySelector("#profilePictureInput")
+        .addEventListener("change", (event) => {
+          changeProfilePicture(event);
+        });
+
       //set up service worker for notifications
 
       //check if the serveice worker can work in the current browser

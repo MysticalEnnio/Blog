@@ -74,6 +74,8 @@ app.post("/api/image/uploadFile", function (req, res) {
     {
       file: req.files.image.data, //required
       fileName: req.files.image.md5, //required
+      overwriteFile: true,
+      useUniqueFileName: false,
       tags: ["usa-blog"],
     },
     function (error, result) {
@@ -227,6 +229,58 @@ app.post("/api/newPost", function (req, res) {
       .toArray()
       .then((subscriptions) => sendNotifications(subscriptions, id));
   });
+});
+
+app.post("/api/changeProfilePicture", function (req, res) {
+  if (!req.files.image) {
+    res.send({ status: 400, message: "No image specified" });
+    return;
+  }
+  if (!req.body.userId) {
+    res.send({ status: 400, message: "No userId specified" });
+    return;
+  }
+  console.log(req.files.image);
+  imagekit.upload(
+    {
+      file: req.files.image.data, //required
+      fileName: req.files.image.md5, //required
+      overwriteFile: true,
+      useUniqueFileName: false,
+      tags: ["usa-blog", "profile-picture"],
+    },
+    function (error, result) {
+      if (error) {
+        console.log(error);
+        res.send({
+          status: error.statusCode,
+        });
+      } else {
+        //change profile picture
+        connectToDb(() => {
+          db.collection("Users")
+            .updateOne(
+              { id: req.body.userId },
+              { $set: { profilePicture: result.url } }
+            )
+            .then(() => {
+              res.send({
+                status: 200,
+                file: {
+                  url: result.url,
+                },
+              });
+            })
+            .catch((err) => {
+              res.send({
+                status: 500,
+                message: "internal server error: " + err.body,
+              });
+            });
+        });
+      }
+    }
+  );
 });
 
 app.post("/api/addComment", function (req, res) {
@@ -395,7 +449,11 @@ app.post("/api/login", function (req, res) {
             //check if password is correct
             if (users[0].password == reqData.password) {
               console.log("password correct");
-              res.send({ status: 200, id: users[0].id });
+              res.send({
+                status: 200,
+                id: users[0].id,
+                profilePicture: users[0].profilePicture,
+              });
             }
           }
         });
