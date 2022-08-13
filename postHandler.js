@@ -35,6 +35,14 @@ function translate(toTranslate, language) {
 module.exports = {
   show: function (postData, res, lang = "de", connectToDb) {
     const html = fs.readFileSync(__dirname + "/static/page.html", "utf8");
+    if (lang == "en") {
+      res.send(
+        ejs.render(html, {
+          postData: JSON.stringify(postData),
+        })
+      );
+      return;
+    }
     //check if translation exists
     connectToDb((db) => {
       db.collection("Translations")
