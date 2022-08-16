@@ -41,6 +41,8 @@ This color should be eye-catching but not harsh. It can be liberally applied to 
   --heading-color: #ee944d;
   --header-color: #8eb7e6;
   --text-color-2: #ff8ab1;
+  --dark-shade: #b8ccd6;
+  --gray-color: #aeaeae;
 }
 
 * {
@@ -102,7 +104,15 @@ hr {
 }
 
 .hide {
-  display: none;
+  display: none !important;
+}
+
+.disable-select {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 #header {
@@ -184,6 +194,180 @@ hr {
 #postContent {
   margin-bottom: 0.5em;
   font-size: 1.25rem;
+}
+
+#postContent > * {
+  margin-top: 1rem;
+}
+
+.verticalLine {
+  height: 90%;
+  width: 2px;
+  background-color: var(--text-color-2);
+  margin: 0 1.25rem;
+}
+
+.newCommentWrapper {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profilePictureWrapper {
+  height: 2.5rem;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  border-radius: 100%;
+  margin-right: 1rem;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.profilePicture {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 100%;
+  transform: scale(1.1);
+}
+
+.newCommentInput {
+  width: 100%;
+  max-height: 6.8125rem !important;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid black;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  resize: none;
+}
+
+.newCommentInput:focus {
+  outline: none;
+}
+
+.sendCommentWrapper {
+  margin: 0 0.75rem;
+  justify-self: center;
+  border-radius: 0.25rem;
+  background-color: var(--dark-shade);
+}
+
+.sendComment {
+  padding: 0.5rem 1rem;
+  color: var(--text-color);
+  border: 2.5px solid var(--text-color-2);
+  background-color: var(--bg-color);
+  border-radius: 0.25rem;
+  transition: transform 0.3s;
+  transform: translate(-6px, -6px);
+  cursor: pointer;
+}
+
+.sendComment:hover {
+  border: 2.5px solid var(--text-color-2);
+  transform: translate(0px);
+}
+
+#noComments {
+  color: var(--gray-color);
+}
+
+#commentsWrapper {
+  margin-top: 2rem;
+}
+
+.comment,
+.replyComment,
+.commentHeader {
+  display: flex;
+  align-items: stretch;
+}
+
+.commentMain {
+  width: 100%;
+}
+
+.commentLeft {
+  width: 2.5rem;
+  margin-right: 1rem;
+}
+
+.commentReplyTo {
+  color: var(--gray-color);
+}
+
+.commentReplyToUser {
+  color: var(--text-color-2);
+}
+
+.commentAuthor {
+  font-weight: bold;
+}
+
+.commentDate {
+  color: var(--gray-color);
+}
+
+.commentFooter {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.commentFooterTools {
+  width: 100%;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--text-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.replyToComment {
+  color: var(--text-color-2);
+  cursor: pointer;
+}
+
+.commentLikesWrapper {
+  width: max-content;
+  height: 1rem;
+  position: relative;
+  display: flex;
+}
+
+.commentLikesWrapper p {
+  margin-left: 2rem;
+}
+
+.like-icon {
+  position: absolute;
+  background: url("https://abs.twimg.com/a/1454637594/img/t1/web_heart_animation.png");
+  background-position: 0px;
+  background-repeat: no-repeat;
+  height: 100px;
+  width: 100px;
+  transform: scale(0.75);
+  top: -40px;
+  left: -40px;
+  pointer-events: none;
+}
+.toggleLike {
+  opacity: 0;
+  cursor: pointer;
+  transform: scale(3);
+  position: absolute;
+}
+.toggleLike:checked + .like-icon {
+  animation: heart-animate 0.8s steps(28) forwards;
+}
+@keyframes heart-animate {
+  100% {
+    background-position: -2800px;
+  }
 }
 
 /*Media Keyframes*/

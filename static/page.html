@@ -12,19 +12,10 @@ Copyright © 2021 Ennio Marke
 
 <head>
   <meta charset="UTF-8">
-
   <link rel="stylesheet" href="css/post.css">
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
   <script type="text/javascript">
     const postData = JSON.parse(`<%- postData %>`);
-    const postContent = <%- postContent %>;
+    const postContent = `<%- postContent %>`;
   </script>
   <script src="js/pageRender.js"></script>
   <title></title>
@@ -34,21 +25,115 @@ Copyright © 2021 Ennio Marke
   <div id="header">
     <h1 id="heading"><a href="/">Blog</a></h1>
   </div>
-  <div id="main">
-    <h1 id="postHeading"></h1>
-    <p id="postDate" data-date></p>
-    <div id="postTags" data-tags></div>
-    <div id="postContent" data-content></div>
-    <div id="postComments">
-      <hr>
-      <div style="height: 100vh;">
-        <div id="newCommentWrapper">
-          <textarea
-            id="mytextarea"><p>To insert a 🙂 emoji, either:</p><ul><li>Type a colon followed by a keyword, e.g., <code>:smile</code>, then press <em>Enter</em> or&nbsp;<em>Return</em> to add the highlighted emoji, or click the desired emoji from those displayed, or</li><li>Select the emoticons toolbar button to open the picker, and use the tabs or search bar to browse, then click the desired emoji</li></ul><p>Try it here!&nbsp;</p></textarea>
+  <h1 id="postHeading"></h1>
+  <p id="postDate" data-date></p>
+  <div id="postTags" data-tags></div>
+  <div id="postContent" data-content></div>
+  <div id="postComments">
+    <hr>
+    <br>
+    <div style="height: 100vh;">
+      <div class="newCommentWrapper">
+        <div class="profilePictureWrapper"><img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
+            class="profilePicture"></div>
+        <textarea class="newCommentInput" rows="1" oninput="auto_grow(this)" onload="auto_grow(this)"></textarea>
+        <div class="sendCommentWrapper">
+          <button class="sendComment" onclick="sendComment()">Send</button>
         </div>
+      </div>
+      <div id="commentsWrapper">
+        <p class="hide" id="noComments">There are no comments yet...</p>
       </div>
     </div>
   </div>
+  <template data-comment-template>
+    <div class="comment">
+      <div class="commentLeft">
+        <div class="profilePictureWrapper">
+          <img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png" class="profilePicture">
+        </div>
+      </div>
+      <div class="commentMain">
+        <div class="commentHeader">
+          <p class="commentAuthor"></p>
+          &nbsp;&#183;&nbsp;
+          <p class="commentDate"></p>
+        </div>
+        <div class="commentContentWrapper">
+          <p class="commentContent"></p>
+        </div>
+        <div class="commentFooter">
+          <div class="commentFooterTools">
+            <div class="commentLikesWrapper">
+              <input type="checkbox" class="toggleLike" onchange="toggleLike(this)">
+              <div class="like-icon"></div>
+              </input>
+              <p class="commentLikes">0</p>
+            </div>
+            <p class="replyToComment disable-select" onclick="toggleReply(this)">reply</p>
+          </div>
+          <div class="newCommentWrapper hide">
+            <div class="profilePictureWrapper"><img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
+                class="profilePicture"></div>
+            <textarea class="newCommentInput" rows="1" oninput="auto_grow(this)" onload="auto_grow(this)"></textarea>
+            <div class="sendCommentWrapper">
+              <button class="sendComment" onclick="sendReplyComment(this)">Send</button>
+            </div>
+          </div>
+        </div>
+        <div class="commentReplys">
+        </div>
+      </div>
+    </div>
+  </template>
+  <template data-reply-comment-template>
+    <div class="replyComment">
+      <div class="commentLeft">
+        <div class="profilePictureWrapper">
+          <img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png" class="profilePicture">
+        </div>
+      </div>
+      <div class="commentMain">
+        <div class="commentHeader">
+          <p class="commentAuthor"></p>
+          &nbsp;&#183;&nbsp;
+          <p class="commentDate"></p>
+        </div>
+        <div class="commentContentWrapper">
+          <p class="commentContent"></p>
+        </div>
+        <div class="commentFooter">
+          <div class="commentFooterTools">
+            <div class="commentLikesWrapper">
+              <input type="checkbox" class="toggleLike" onchange="toggleLike(this)">
+              <div class="like-icon"></div>
+              </input>
+              <p class="commentLikes">0</p>
+            </div>
+            <p class="replyToComment disable-select" onclick="toggleReply(this, 1)">reply</p>
+          </div>
+          <div class="newCommentWrapper hide">
+            <div class="profilePictureWrapper"><img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
+                class="profilePicture"></div>
+            <textarea class="newCommentInput" rows="1" oninput="auto_grow(this)" onload="auto_grow(this)"></textarea>
+            <div class="sendCommentWrapper">
+              <button class="sendComment" onclick="sendReplyComment(this, 1)">Send</button>
+            </div>
+          </div>
+        </div>
+        <div class="commentReplys">
+        </div>
+      </div>
+    </div>
+  </template>
+  <template data-reply-to-template>
+    <div class="commentReplyToWrapper">
+      <p class="commentReplyTo">Replying to <span class="commentReplyToUser">@NoOne</span></p>
+    </div>
+  </template>
+  <template data-vertical-line-template>
+    <div class="verticalLine"></div>
+  </template>
 </body>
 
 </html>

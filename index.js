@@ -275,6 +275,14 @@ app.post("/api/addComment", function (req, res) {
     res.send({ status: 400, message: "missing author" });
     return;
   }
+  if (!reqData.authorName) {
+    res.send({ status: 400, message: "missing author name" });
+    return;
+  }
+  if (!reqData.authorProfilePicture) {
+    res.send({ status: 400, message: "missing author profile picture" });
+    return;
+  }
   comment.add(connectToDb, crypto, res, reqData);
 });
 
@@ -299,18 +307,38 @@ app.post("/api/deleteComment", function (req, res) {
   comment.delete(connectToDb, res, reqData);
 });
 
-app.get("/api/makeAdmin", function (req, res) {
-  if (!req.query.id) {
-    res.send("No id specified");
+app.get("/api/getComments", function (req, res) {
+  if (!req.query.postId) {
+    res.send({ status: 400, message: "missing post id" });
     return;
   }
-  connectToDb(() => {
-    db.collection("Users").updateOne(
-      { id: req.query.id },
-      { $set: { admin: true } }
-    );
-    res.send(200);
-  });
+  comment.get(connectToDb, res, req.query.postId);
+});
+
+app.post("/api/addLike", function (req, res) {
+  let reqData = req.body;
+  if (!reqData.postId) {
+    res.send({ status: 400, message: "missing post id" });
+    return;
+  }
+  if (!reqData.userName) {
+    res.send({ status: 400, message: "missing user name" });
+    return;
+  }
+  comment.like.add(connectToDb, res, reqData);
+});
+
+app.post("/api/removeLike", function (req, res) {
+  let reqData = req.body;
+  if (!reqData.postId) {
+    res.send({ status: 400, message: "missing post id" });
+    return;
+  }
+  if (!reqData.userName) {
+    res.send({ status: 400, message: "missing user name" });
+    return;
+  }
+  comment.like.remove(connectToDb, res, reqData);
 });
 
 app.get("/api/notificationTest", function (req, res) {
@@ -360,6 +388,8 @@ app.post("/api/addNotificationName", function (req, res) {
         {
           $set: {
             userId: reqData.userId,
+            userName: reqData.userName,
+            userEmail: reqData.userEmail,
           },
         }
       )

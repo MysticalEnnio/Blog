@@ -316,6 +316,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
         let subscription =
           await serviceWorkerRegistration.pushManager.getSubscription();
         console.log(subscription);
+        if (!localStorage.getItem("id")) return;
         fetch("/api/addNotificationName", {
           method: "POST",
           headers: {
@@ -324,8 +325,11 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
           body: JSON.stringify({
             subscription,
             userId: localStorage.getItem("id"),
+            userName: localStorage.getItem("name"),
+            userEmail: localStorage.getItem("email"),
           }),
         });
+        localStorage.setItem("namedNotifications", true);
       }
     })();
   });
