@@ -1,4 +1,6 @@
-const userProfilePicture = localStorage.getItem("profilePicture");
+const userProfilePicture =
+  localStorage.getItem("profilePicture") ??
+  "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png";
 const userId = localStorage.getItem("id");
 const userName = localStorage.getItem("name");
 const userPassword = localStorage.getItem("password");
@@ -188,6 +190,9 @@ function loadComment(options) {
     options.comment;
   commentTemplate.querySelector(".commentLikes").textContent =
     options.likes?.length || 0;
+  commentTemplate.querySelector(".toggleLike").checked = options.likes?.find(
+    (e) => e == userName
+  );
   commentTemplate.querySelector(".profilePicture").src =
     options.authorProfilePicture;
   commentTemplate.querySelector(".newCommentWrapper .profilePicture").src =
