@@ -124,13 +124,12 @@ $(document).ready(() => {
   searchInput.on("input propertychange", (e) => {
     const value = e.target.value.toLowerCase();
     postsData.forEach((post) => {
-      const isVisible =
-        post.heading.toLowerCase().includes(value) ||
-        post.content.filter(
+      const isVisible = post.heading.toLowerCase().includes(value);
+      /*|| post.content.filter(
           (e) =>
             e.data.text?.toLowerCase().includes(value) ||
             e.data.caption?.toLowerCase().includes(value)
-        ).length > 0;
+        ).length > 0;*/
       post.element.classList.toggle("hide", !isVisible);
     });
   });
@@ -317,6 +316,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
           await serviceWorkerRegistration.pushManager.getSubscription();
         console.log(subscription);
         if (!localStorage.getItem("id")) return;
+        if (!subscription) return;
         fetch("/api/addNotificationName", {
           method: "POST",
           headers: {

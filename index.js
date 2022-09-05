@@ -95,7 +95,7 @@ app.post("/api/image/uploadFile", function (req, res) {
 });
 
 app.get("/api/addTag", function (req, res) {
-  if (!req.query.name) {
+  if (!req.query.name || req.query.name.length == 0) {
     res.send("No tag specified");
     return;
   }
