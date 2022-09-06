@@ -63,7 +63,7 @@ async function send() {
               .then((subscription) => {
                 console.log("Subscribed to push service");
                 //Send push notification
-                fetch("/subscribe", {
+                fetch("/api/notifications/subscribe", {
                   method: "POST",
                   body: JSON.stringify({
                     ...subscription,
@@ -92,7 +92,7 @@ async function send() {
 $(document).ready(() => {
   (async () => {
     if (localStorage.getItem("password") && localStorage.getItem("id")) {
-      fetch("/api/verifyId", {
+      fetch("/api/account/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +138,7 @@ $(document).ready(() => {
 });
 
 function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
-  fetch("/api/getPosts")
+  fetch("/api/posts/get")
     .then((res) => {
       if (res.status == 200) return res.json();
       else {
@@ -276,7 +276,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
         formData.append("image", files[0]);
         formData.append("userId", localStorage.getItem("id"));
 
-        fetch("/api/changeProfilePicture", {
+        fetch("/api/account/profilePicture/change", {
           method: "POST",
           body: formData,
         })
@@ -317,7 +317,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
         console.log(subscription);
         if (!localStorage.getItem("id")) return;
         if (!subscription) return;
-        fetch("/api/addNotificationName", {
+        fetch("/api/notifications/addName", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

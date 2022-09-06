@@ -3,7 +3,7 @@ let selectedTags = [];
 
 (function loadTags() {
   //fetch the tags from the server
-  fetch("/api/getTags")
+  fetch("/api/tags/get")
     .then((response) => response.json())
     .then((data) => {
       avaibleTags = [];
@@ -21,7 +21,7 @@ let selectedTags = [];
 document.addEventListener("DOMContentLoaded", () => {
   (async () => {
     if (localStorage.getItem("password") && localStorage.getItem("id")) {
-      fetch("/api/verifyId", {
+      fetch("/api/account/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         content: tinymce.activeEditor.getContent(),
                       });
                       console.log("Post body: ", postBody);
-                      fetch(`/api/newPost`, {
+                      fetch(`/api/posts/new`, {
                         method: "POST",
                         headers: {
                           Accept: "application/json",

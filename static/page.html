@@ -15,7 +15,7 @@ Copyright © 2021 Ennio Marke
   <link rel="stylesheet" href="css/post.css">
   <script type="text/javascript">
     const postData = JSON.parse(`<%- postData %>`);
-    const postContent = <%- postContent %>;
+    const postContent = `<%- postContent %>`;
   </script>
   <script src="js/pageRender.js"></script>
   <title></title>
@@ -70,7 +70,14 @@ Copyright © 2021 Ennio Marke
               </input>
               <p class="commentLikes">0</p>
             </div>
-            <p class="replyToComment disable-select" onclick="toggleReply(this)">reply</p>
+            <div class="commentFooterRight">
+              <div>
+                <p class="editComment disable-select" onclick="editComment(this)">edit</p>
+                <p class="cancleEdit disable-select hide" onclick="cancleEdit(this)">cancle</p>
+              </div>
+              <p>|</p>
+              <p class="replyToComment disable-select" onclick="toggleReply(this)">reply</p>
+            </div>
           </div>
           <div class="newCommentWrapper hide">
             <div class="profilePictureWrapper"><img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
@@ -110,7 +117,14 @@ Copyright © 2021 Ennio Marke
               </input>
               <p class="commentLikes">0</p>
             </div>
-            <p class="replyToComment disable-select" onclick="toggleReply(this, 1)">reply</p>
+            <div class="commentFooterRight">
+              <div>
+                <p class="editComment disable-select" onclick="editComment(this)">edit</p>
+                <p class="cancleEdit disable-select hide" onclick="cancleEdit(this)">cancle</p>
+              </div>
+              <p>|</p>
+              <p class="replyToComment disable-select" onclick="toggleReply(this, 1)">reply</p>
+            </div>
           </div>
           <div class="newCommentWrapper hide">
             <div class="profilePictureWrapper"><img src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"

@@ -327,9 +327,20 @@ hr {
   margin-bottom: 0.5rem;
 }
 
-.replyToComment {
+.replyToComment,
+.editComment,
+.cancleEdit {
   color: var(--text-color-2);
   cursor: pointer;
+}
+
+.commentFooterRight {
+  display: flex;
+  flex-direction: row;
+}
+
+.commentFooterRight > * {
+  margin-right: 0.25rem;
 }
 
 .commentLikesWrapper {

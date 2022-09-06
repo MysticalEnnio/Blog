@@ -19,7 +19,7 @@ const port = process.env.PORT || 80;
 //const posts = db.collection("posts");
 
 let db;
-let posts = [];
+//let posts = [];
 let dbConnected = false;
 var imagekit = new ImageKit({
   publicKey: "public_D202xiGxO/ZlrH8PUHojBH95ft8=",
@@ -46,8 +46,7 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 app.use(express.static("public"));
 
-//subscribe route
-app.post("/subscribe", (req, res) => {
+app.post("/api/notifications/subscribe", (req, res) => {
   //get push subscription object from the request
   const notificationSubscription = req.body;
 
@@ -94,7 +93,7 @@ app.post("/api/image/uploadFile", function (req, res) {
   );
 });
 
-app.get("/api/addTag", function (req, res) {
+app.get("/api/tags/add", function (req, res) {
   if (!req.query.name || req.query.name.length == 0) {
     res.send("No tag specified");
     return;
@@ -107,7 +106,7 @@ app.get("/api/addTag", function (req, res) {
   });
 });
 
-app.get("/api/getTags", function (req, res) {
+app.get("/api/tags/get", function (req, res) {
   connectToDb(() => {
     db.collection("Tags")
       .find({})
@@ -134,7 +133,19 @@ app.get("/post", function (req, res) {
   }
 });
 
-app.get("/api/getPosts", function (req, res) {
+app.get("/api/users/get", function (req, res) {
+  if (!req.query.name) {
+    res.send("No name specified");
+    return;
+  }
+  connectToDb(() => {
+    db.collection("Users")
+      .findOne({ name: req.query.name })
+      .then((user) => res.send(user));
+  });
+});
+
+app.get("/api/posts/get", function (req, res) {
   console.log("getPosts");
   connectToDb(() => {
     db.collection("Posts")
@@ -144,7 +155,7 @@ app.get("/api/getPosts", function (req, res) {
   });
 });
 
-app.get("/api/downloadPost", function (req, res) {
+app.get("/api/posts/download", function (req, res) {
   connectToDb(() => {
     db.collection("Posts")
       .find({ id: req.query.id })
@@ -167,7 +178,7 @@ app.get("/api/deleteTestPosts", function (req, res) {
   });
 });
 
-app.post("/api/newPost", function (req, res) {
+app.post("/api/posts/new", function (req, res) {
   console.log("newPost");
   let reqData = req.body;
   if (!reqData.author) {
@@ -209,7 +220,7 @@ app.post("/api/newPost", function (req, res) {
   });
 });
 
-app.post("/api/changeProfilePicture", function (req, res) {
+app.post("/api/account/profilePicture/change", function (req, res) {
   if (!req.files.image) {
     res.send({ status: 400, message: "No image specified" });
     return;
@@ -261,7 +272,7 @@ app.post("/api/changeProfilePicture", function (req, res) {
   );
 });
 
-app.post("/api/addComment", function (req, res) {
+app.post("/api/comments/add", function (req, res) {
   let reqData = req.body;
   if (!reqData.postId) {
     res.send({ status: 400, message: "missing post id" });
@@ -286,7 +297,7 @@ app.post("/api/addComment", function (req, res) {
   comment.add(connectToDb, crypto, res, reqData);
 });
 
-app.post("/api/deleteComment", function (req, res) {
+app.post("/api/comments/delete", function (req, res) {
   let reqData = req.body;
   if (!reqData.postId) {
     res.send({ status: 400, message: "missing post id" });
@@ -307,7 +318,7 @@ app.post("/api/deleteComment", function (req, res) {
   comment.delete(connectToDb, res, reqData);
 });
 
-app.get("/api/getComments", function (req, res) {
+app.get("/api/comments/get", function (req, res) {
   if (!req.query.postId) {
     res.send({ status: 400, message: "missing post id" });
     return;
@@ -315,7 +326,7 @@ app.get("/api/getComments", function (req, res) {
   comment.get(connectToDb, res, req.query.postId);
 });
 
-app.post("/api/addLike", function (req, res) {
+app.post("/api/likes/add", function (req, res) {
   let reqData = req.body;
   if (!reqData.postId) {
     res.send({ status: 400, message: "missing post id" });
@@ -328,7 +339,7 @@ app.post("/api/addLike", function (req, res) {
   comment.like.add(connectToDb, res, reqData);
 });
 
-app.post("/api/removeLike", function (req, res) {
+app.post("/api/likes/remove", function (req, res) {
   let reqData = req.body;
   if (!reqData.postId) {
     res.send({ status: 400, message: "missing post id" });
@@ -341,7 +352,7 @@ app.post("/api/removeLike", function (req, res) {
   comment.like.remove(connectToDb, res, reqData);
 });
 
-app.get("/api/notificationTest", function (req, res) {
+app.get("/api/notifications/test", function (req, res) {
   connectToDb(() => {
     res.sendStatus(200);
     db.collection("Subscriptions")
@@ -373,11 +384,11 @@ app.get("/api/notificationTest", function (req, res) {
   });
 });
 
-app.get("/api/seenNotification", function (req, res) {
+app.get("/api/notifications/seen", function (req, res) {
   console.log("seenNotification: " + req.query.id);
 });
 
-app.post("/api/addNotificationName", function (req, res) {
+app.post("/api/notifications/addName", function (req, res) {
   let reqData = req.body;
   connectToDb(() => {
     db.collection("Subscriptions")
@@ -397,7 +408,7 @@ app.post("/api/addNotificationName", function (req, res) {
   });
 });
 
-app.post("/api/login", function (req, res) {
+app.post("/api/account/login", function (req, res) {
   /*
   1: Check if name, password, and email are provided
   2: Check if account exists with email or name
@@ -419,7 +430,6 @@ app.post("/api/login", function (req, res) {
     res.send({ status: 400, message: "missing email" });
     return;
   }
-  console.log("all data provided");
   setTimeout(() => {
     connectToDb(() => {
       console.log("connected to db");
@@ -469,7 +479,7 @@ app.post("/api/login", function (req, res) {
   }, 1000);
 });
 
-app.post("/api/verifyId", function (req, res) {
+app.post("/api/account/verifyId", function (req, res) {
   console.log("verifyId");
   /*
   1: Check if id is provided

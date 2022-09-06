@@ -10,16 +10,16 @@ document.addEventListener("DOMContentLoaded", function (event) {
   var password = document.getElementById("Password");
   //add event listener to submit button
   submit.addEventListener("click", function (event) {
-    fetch("/api/login", {
+    fetch("/api/account/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "same-origin",
       body: JSON.stringify({
-        name: name.value,
+        name: name.value.replace(/\s/g, ""),
         password: password.value,
-        email: email.value,
+        email: email.value.replace(/\s/g, ""),
       }),
     })
       .then((response) => response.json())

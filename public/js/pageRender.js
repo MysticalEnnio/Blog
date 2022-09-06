@@ -13,7 +13,7 @@ function auto_grow(element) {
 document.addEventListener("DOMContentLoaded", () => {
   (async () => {
     if (userPassword && userId) {
-      fetch("/api/verifyId", {
+      fetch("/api/account/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,13 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     ]
 
-  1. Get all comments from the database (GET /api/getComments?postId=postId)
+  1. Get all comments from the database (GET /api/comments/get?postId=postId)
     1.1. If there are no comments, display a message saying so
   2. Load all direct Comments
   3. Load all replies to comments and append them to the correct comment
   4. Load all replies to replies and place them under the correct reply
   */
-  fetch("/api/getComments?postId=" + postData.id)
+  fetch("/api/comments/get?postId=" + postData.id)
     .then((res) => res.json())
     .then((data) => {
       if (data.comments.length == 0) {
@@ -193,8 +193,30 @@ function loadComment(options) {
   commentTemplate.querySelector(".toggleLike").checked = options.likes?.find(
     (e) => e == userName
   );
-  commentTemplate.querySelector(".profilePicture").src =
-    options.authorProfilePicture;
+  //check if profile picture is set(Default: https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png)
+  if (
+    options.authorProfilePicture !=
+    "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
+  ) {
+    commentTemplate.querySelector(".profilePicture").src =
+      options.authorProfilePicture;
+  } else {
+    //check if user has a profile picture asynchronusly
+    let profilePictueRef = commentTemplate.querySelector(".profilePicture");
+    (async () => {
+      let profilePictue = profilePictueRef;
+      const res = await fetch("/api/users/get?name=" + options.authorName);
+      const data = await res.json();
+      console.log(data);
+      if (
+        data.profilePicture !=
+          "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png" &&
+        data.profilePicture != undefined
+      ) {
+        profilePictue.src = data.profilePicture;
+      }
+    })();
+  }
   commentTemplate.querySelector(".newCommentWrapper .profilePicture").src =
     userProfilePicture;
   if (options.replyId) {
@@ -269,7 +291,7 @@ function sendComment() {
     authorName: userName,
     authorProfilePicture: userProfilePicture,
   };
-  fetch("/api/addComment", {
+  fetch("/api/comments/add", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -361,7 +383,7 @@ function sendReplyComment(element, replyToReply = 0) {
       replyId,
     };
   }
-  fetch("/api/addComment", {
+  fetch("/api/comments/add", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -399,7 +421,7 @@ function toggleLike(element) {
       parseInt(
         element.parentElement.querySelector(".commentLikes").textContent
       ) + 1;
-    fetch("/api/addLike", {
+    fetch("/api/likes/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -418,7 +440,7 @@ function toggleLike(element) {
       parseInt(
         element.parentElement.querySelector(".commentLikes").textContent
       ) - 1;
-    fetch("/api/removeLike", {
+    fetch("/api/likes/remove", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -436,7 +458,7 @@ function toggleLike(element) {
 }
 
 function toggleReply(element) {
-  element.parentElement.parentElement
+  element.parentElement.parentElement.parentElement
     .querySelector(".newCommentWrapper")
     .classList.toggle("hide");
   /*let replyTo =
@@ -447,4 +469,46 @@ function toggleReply(element) {
   if (!commentInput.value.includes("@" + replyTo))
     commentInput.value = "@" + replyTo + " " + commentInput.value;
   commentInput.focus();*/
+}
+
+function editComment(element) {
+  let commentContent =
+      element.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector(
+        ".commentContent"
+      ),
+    s = window.getSelection(),
+    r = document.createRange();
+  element.parentElement.querySelector(".editComment").classList.add("hide");
+  element.parentElement.querySelector(".cancleEdit").classList.remove("hide");
+  commentContent.setAttribute("contenteditable", "true");
+  commentContent.setAttribute("commentBefore", commentContent.innerHTML);
+  commentContent.focus();
+  if (
+    typeof window.getSelection != "undefined" &&
+    typeof document.createRange != "undefined"
+  ) {
+    var range = document.createRange();
+    range.selectNodeContents(commentContent);
+    range.collapse(false);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (typeof document.body.createTextRange != "undefined") {
+    var textRange = document.body.createTextRange();
+    textRange.moveToElementText(commentContent);
+    textRange.collapse(false);
+    textRange.select();
+  }
+}
+
+function cancleEdit(element) {
+  let commentContent =
+    element.parentElement.parentElement.parentElement.parentElement.parentElement.querySelector(
+      ".commentContent"
+    );
+  element.parentElement.querySelector(".editComment").classList.remove("hide");
+  element.parentElement.querySelector(".cancleEdit").classList.add("hide");
+  commentContent.setAttribute("contenteditable", "false");
+  commentContent.innerHTML = commentContent.getAttribute("commentBefore");
+  commentContent.removeAttribute("commentBefore");
 }

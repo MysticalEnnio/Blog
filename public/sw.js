@@ -18,7 +18,7 @@ self.addEventListener("notificationclick", function (e) {
     return;
   }
   fetch(
-    "api/seenNotification?id=" +
+    "api/notifications/seen?id=" +
       data.postId +
       "&userId=" +
       localStorage.getItem("id")
