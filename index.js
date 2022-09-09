@@ -428,7 +428,7 @@ app.post("/api/notifications/addName", function (req, res) {
       .then(() => res.send({ status: 200 }));
   });
 });
-
+///
 app.post("/api/notifications/addSubscription", function (req, res) {
   let reqData = req.body;
   if (!reqData)
