@@ -30,6 +30,14 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
+function goToSettings() {
+  if (localStorage.getItem("admin") == "true") {
+    window.location.href = "/admin?id=" + localStorage.getItem("id");
+    return;
+  }
+  window.location.href = "/settings";
+}
+
 //register the service worker, register our push api, send the notification
 async function send() {
   //register service worker

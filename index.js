@@ -4,6 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const fileUpload = require("express-fileupload");
+const ruid = require("express-ruid");
 const crypto = require("crypto");
 var ImageKit = require("imagekit");
 const post = require("./postHandler.js");
@@ -44,6 +45,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
+app.use(ruid());
 app.use(express.static("public"));
 
 app.post("/api/notifications/subscribe", (req, res) => {
@@ -131,6 +133,25 @@ app.get("/post", function (req, res) {
   } else {
     res.redirect("/");
   }
+});
+
+app.get("/admin", function (req, res) {
+  console.log("req: ", req);
+  if (!req.query.id || req.query.id == "") {
+    res.redirect("/");
+    return;
+  }
+  connectToDb(() => {
+    db.collection("Users")
+      .findOne({ id: req.query.id })
+      .then((user) => {
+        if (user?.admin) {
+          res.sendFile(__dirname + "/static/admin.html");
+          return;
+        }
+        res.redirect("/settings");
+      });
+  });
 });
 
 app.get("/api/users/get", function (req, res) {
@@ -406,6 +427,21 @@ app.post("/api/notifications/addName", function (req, res) {
       )
       .then(() => res.send({ status: 200 }));
   });
+});
+
+app.post("/api/notifications/addSubscription", function (req, res) {
+  let reqData = req.body;
+  if (!reqData)
+    connectToDb(() => {
+      db.collection("Subscriptions")
+        .insertOne(reqData.notificationSubscription)
+        .then(() => {
+          res.send({ status: 200 });
+        })
+        .catch((err) => {
+          res.send(err);
+        });
+    });
 });
 
 app.post("/api/account/login", function (req, res) {

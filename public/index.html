@@ -36,10 +36,14 @@ Copyright © 2021 Ennio Marke
           <input id="profilePicture" type="image" src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png">
           <input type="file" id="profilePictureInput">
         </div>
+        <div id="settingsButtonWrapper">
+          <p id="settingsButton" onclick="goToSettings()">settings</p>
+        </div>
         <div class="sl-nav" onclick="">
           Language:
           <ul>
-            <li onclick=""><b>Deutsch</b> <i class="fa fa-angle-down" aria-hidden="true"></i>
+            <li onclick="window.location.href = '/admin'"><b>Deutsch</b> <i class="fa fa-angle-down"
+                aria-hidden="true"></i>
               <div class="triangle"></div>
               <ul>
                 <li><i class="sl-flag flag-de">

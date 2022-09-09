@@ -188,6 +188,10 @@ a:hover::before {
   display: none;
 }
 
+#settingsButtonWrapper {
+  height: max-content;
+}
+
 #logout {
   position: absolute;
   bottom: 0;
