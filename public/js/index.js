@@ -156,6 +156,7 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
     })
     .then((posts) => {
       if (posts == undefined) return;
+      $("#loader").remove();
       let lang = localStorage.getItem("language");
       lang ??= "de";
       postsData = posts.map((post) => {
