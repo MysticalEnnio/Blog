@@ -16,23 +16,6 @@ tailwind.config = {
   },
 };
 
-function togglePasswordVisibility() {
-  var x = document.getElementById("passwordInput");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-}
-
-let passwordColors = new Map([
-  [0, "#F87171"],
-  [1, "#F87171"],
-  [2, "#FB923C"],
-  [3, "#FACC15"],
-  [4, "#22C55E"],
-]);
-
 const validateEmail = (email) => {
   return email.match(
     /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -51,7 +34,6 @@ function applyStyles() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  let passwordInputEl = document.getElementById("passwordInput");
   let emailInputEl = document.getElementById("emailInput");
 
   emailInputEl.addEventListener("input", () => {
@@ -69,37 +51,19 @@ document.addEventListener("DOMContentLoaded", () => {
     applyStyles();
   });
 
-  document.getElementById("login").addEventListener("click", (e) => {
-    let error = false;
+  document.getElementById("resetPassword").addEventListener("click", (e) => {
     if (!validateEmail(emailInputEl.value)) {
       emailInputEl.nextElementSibling.classList.add(
         "animate-[shake_linear_0.3s_1]"
       );
-      error = true;
       setTimeout(() => {
         emailInputEl.nextElementSibling.classList.remove(
           "animate-[shake_linear_0.3s_1]"
         );
       }, 300);
+      return;
     }
 
-    if (passwordInputEl.value.length == 0) {
-      passwordInputEl.nextElementSibling.classList.add(
-        "animate-[shake_linear_0.3s_1]"
-      );
-      error = true;
-      setTimeout(() => {
-        passwordInputEl.nextElementSibling.classList.remove(
-          "animate-[shake_linear_0.3s_1]"
-        );
-      }, 300);
-    }
-    if (error) return;
-
-    signIn(emailInputEl.value, passwordInputEl.value);
-  });
-
-  document.getElementById("googleLogin").addEventListener("click", () => {
-    signInWithGoogle();
+    resetPassword(emailInputEl.value);
   });
 });

@@ -97,8 +97,8 @@ async function send() {
     });
 }
 
-$(document).ready(() => {
-  (async () => {
+$(document).ready(async () => {
+  async () => {
     if (localStorage.getItem("password") && localStorage.getItem("id")) {
       fetch("/api/account/verifyId", {
         method: "POST",
@@ -122,7 +122,13 @@ $(document).ready(() => {
       console.log("No password or id saved in local storage");
       window.location.href = "/login";
     }
-  })();
+  };
+
+  let userData = (await getUserData()).data.user;
+  if (!userData) {
+    window.location.href = "/login";
+    return;
+  }
 
   const postTemplate = document.querySelector("[data-post-template]");
   const tagTemplate = document.querySelector("[data-tag-template]");
@@ -142,10 +148,22 @@ $(document).ready(() => {
     });
   });
 
-  loadPostData(postTemplate, postsContainer, tagTemplate, searchInput);
+  loadPostData(
+    postTemplate,
+    postsContainer,
+    tagTemplate,
+    searchInput,
+    userData
+  );
 });
 
-function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
+function loadPostData(
+  postTemplate,
+  postsContainer,
+  tagTemplate,
+  searchInput,
+  userData
+) {
   fetch("/api/posts/get")
     .then((res) => {
       if (res.status == 200) return res.json();
@@ -162,13 +180,12 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
       postsData = posts.map((post) => {
         let postCard = postTemplate.content.cloneNode(true).children[0];
 
-        postCard.querySelector("[data-heading]").firstChild.textContent =
-          post.heading;
+        postCard.querySelector("[data-heading] a").textContent = post.heading;
         postCard.querySelector(
-          "[data-heading]"
-        ).firstChild.href = `/post?id=${post.id}&lang=${lang}`;
+          "[data-heading] a"
+        ).href = `/post?id=${post.id}&lang=${lang}`;
         postCard.querySelector("[data-date]").textContent = new Date(
-          post.timestamp * 1
+          post.timestamp
         ).toLocaleDateString(undefined, {
           year: "numeric",
           month: "long",
@@ -276,8 +293,15 @@ function loadPostData(postTemplate, postsContainer, tagTemplate, searchInput) {
         });
       });
 
-      let profilePicture = localStorage.getItem("profilePicture");
-      if (profilePicture) $("#profilePicture").attr("src", profilePicture);
+      if (userData.user_metadata.avatar_url) {
+        $("#profilePicture").attr("src", userData.user_metadata.avatar_url);
+      } else {
+        let emailHash = md5(userData.email.toLowerCase());
+        $("#profilePicture").attr(
+          "src",
+          "https://www.gravatar.com/avatar/" + emailHash + "?d=mp"
+        );
+      }
 
       const changeProfilePicture = (event) => {
         const files = event.target.files;

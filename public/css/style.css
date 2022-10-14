@@ -486,8 +486,9 @@ a:hover::before {
 }
 
 #tagsWrapper {
-  height: 5vh;
-  margin-bottom: 10vh;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 5vh;
 }
 
 .tag {

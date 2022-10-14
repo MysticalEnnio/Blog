@@ -19,7 +19,7 @@ let selectedTags = [];
 
 //Wait for dom to load
 document.addEventListener("DOMContentLoaded", () => {
-  (async () => {
+  async () => {
     if (localStorage.getItem("password") && localStorage.getItem("id")) {
       fetch("/api/account/verifyId", {
         method: "POST",
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("No password or id saved in local storage");
       window.location.href = "/login";
     }
-  })();
+  };
 
   var useDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
     },
-    images_upload_url: "/api/image/uploadFile",
+    images_upload_url: "/api/image/upload/file",
     toolbar_sticky: true,
     autosave_ask_before_unload: true,
     autosave_interval: "30s",

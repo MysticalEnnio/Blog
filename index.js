@@ -12,12 +12,19 @@ const comment = require("./commentSystem.js");
 const fs = require("fs");
 const webpush = require("web-push");
 const dbo = require("./db/connection");
+const { createClient } = require("@supabase/supabase-js");
 //const CyclicDb = require("cyclic-dynamodb");
 const app = express();
 const port = process.env.PORT || 80;
 
 //const db = CyclicDb("encouraging-clothes-bearCyclicDB");
 //const posts = db.collection("posts");
+
+// Create a single supabase client for interacting with your database
+const supabase = createClient(
+  "https://cewczdfxnboumewhikew.supabase.co",
+  process.env.SUPABASE_SERVICE_KEY
+);
 
 let db;
 //let posts = [];
@@ -70,7 +77,7 @@ app.post("/api/notifications/subscribe", (req, res) => {
 
 app.all("/api/ping", (req, res) => res.send("pong"));
 
-app.post("/api/image/uploadFile", function (req, res) {
+app.post("/api/image/upload/file", function (req, res) {
   imagekit.upload(
     {
       file: req.files.file.data, //required
@@ -83,11 +90,13 @@ app.post("/api/image/uploadFile", function (req, res) {
       if (error) {
         console.log(error);
         res.send({
+          status: 500,
           success: 0,
         });
       } else {
         console.log(result);
         res.send({
+          status: 200,
           location: result.url,
         });
       }
@@ -117,19 +126,22 @@ app.get("/api/tags/get", function (req, res) {
   });
 });
 
-app.get("/post", function (req, res) {
+app.get("/post", async function (req, res) {
   console.log("post: " + req.query.id);
   if (req.query.id) {
     if (req.query.id == "test") {
       res.redirect("/");
       return;
     }
-    connectToDb(() => {
-      db.collection("Posts")
-        .find({ id: req.query.id })
-        .toArray()
-        .then((posts) => post.show(posts[0], res, req.query.lang, connectToDb));
-    });
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("id", req.query.id);
+    if (data.length == 0) {
+      res.redirect("/");
+      return;
+    }
+    post.show(data[0], res, req.query.lang, connectToDb);
   } else {
     res.redirect("/");
   }
@@ -154,26 +166,27 @@ app.get("/admin", function (req, res) {
   });
 });
 
-app.get("/api/users/get", function (req, res) {
-  if (!req.query.name) {
-    res.send("No name specified");
+app.get("/api/users/get", async function (req, res) {
+  if (!req.query.id) {
+    res.send("No id specified");
     return;
   }
-  connectToDb(() => {
-    db.collection("Users")
-      .findOne({ name: req.query.name })
-      .then((user) => res.send(user));
-  });
+  const { data, error } = await supabase.auth.api.getUserById(req.query.id);
+  if (error) {
+    res.send(error);
+    return;
+  }
+  res.send(data);
 });
 
-app.get("/api/posts/get", function (req, res) {
+app.get("/api/posts/get", async function (req, res) {
   console.log("getPosts");
-  connectToDb(() => {
-    db.collection("Posts")
-      .find({})
-      .toArray()
-      .then((posts) => res.send(posts));
-  });
+  const { data, error } = await supabase.from("posts").select();
+  if (error) {
+    res.send({ status: 400, message: error });
+    return;
+  }
+  res.send(data);
 });
 
 app.get("/api/posts/download", function (req, res) {
@@ -199,7 +212,25 @@ app.get("/api/deleteTestPosts", function (req, res) {
   });
 });
 
-app.post("/api/posts/new", function (req, res) {
+app.get("/api/newTestPost", async function (req, res) {
+  let post = {
+    id: "04f1c5c9f8b55ec6a5c2851109989cf9",
+    heading: "test",
+    author: "Ennio Marke",
+    summary: "test",
+    tags: ["test"],
+    content: "test",
+  };
+
+  const { data, error } = await supabase.from("posts").insert([post]);
+  if (error) {
+    res.send(error);
+    return;
+  }
+  res.send(data);
+});
+
+app.post("/api/posts/new", async function (req, res) {
   console.log("newPost");
   let reqData = req.body;
   if (!reqData.author) {
@@ -226,28 +257,20 @@ app.post("/api/posts/new", function (req, res) {
     heading: reqData.heading,
     tags: reqData.tags ? reqData.tags : [],
     summary: reqData.summary,
-    timestamp: reqData.timestamp,
     content: reqData.content,
   };
 
-  connectToDb(() => {
-    db.collection("Posts").insertOne(post);
-    res.send({ status: 200, id });
-    if (post.summary.toLowerCase() == "test") return;
-    db.collection("Subscriptions")
-      .find({})
-      .toArray()
-      .then((subscriptions) => sendNotifications(subscriptions, id));
-  });
-});
-
-app.post("/api/account/profilePicture/change", function (req, res) {
-  if (!req.files.image) {
-    res.send({ status: 400, message: "No image specified" });
+  const { data, error } = await supabase.from("posts").insert([post]);
+  if (error) {
+    res.send({ status: 400, message: error });
     return;
   }
-  if (!req.body.userId) {
-    res.send({ status: 400, message: "No userId specified" });
+  res.send({ status: 200, id: data[0].id });
+});
+
+app.post("/api/image/upload/profilePicture", function (req, res) {
+  if (!req.files.image) {
+    res.send({ status: 400, message: "No image specified" });
     return;
   }
   console.log(req.files.image);
@@ -259,34 +282,16 @@ app.post("/api/account/profilePicture/change", function (req, res) {
       useUniqueFileName: false,
       tags: ["usa-blog", "profile-picture"],
     },
-    function (error, result) {
+    async function (error, result) {
       if (error) {
         console.log(error);
-        res.send({
-          status: error.statusCode,
-        });
+        res.send({ status: 500, message: "Internal server error: " + error });
       } else {
-        //change profile picture
-        connectToDb(() => {
-          db.collection("Users")
-            .updateOne(
-              { id: req.body.userId },
-              { $set: { profilePicture: result.url } }
-            )
-            .then(() => {
-              res.send({
-                status: 200,
-                file: {
-                  url: result.url,
-                },
-              });
-            })
-            .catch((err) => {
-              res.send({
-                status: 500,
-                message: "internal server error: " + err.body,
-              });
-            });
+        res.send({
+          status: 200,
+          file: {
+            url: result.url,
+          },
         });
       }
     }

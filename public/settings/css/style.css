@@ -126,14 +126,3 @@ body {
   --stroke-easing: cubic-bezier(0.3, 1.5, 0.5, 1);
   --stroke-delay: 0.195s;
 }
-html {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-}
-* {
-  box-sizing: inherit;
-}
-*:before,
-*:after {
-  box-sizing: inherit;
-}

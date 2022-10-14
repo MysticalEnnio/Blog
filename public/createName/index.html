@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/index.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="revealer"></div>
+    <div class="w-screen h-screen flex items-center justify-center flex-col">
+      <div class="w-max h-min flex items-center">
+        <h1 class="text-4xl">Enter your real name</h1><h1 class="text-2xl text-gray-500">*</h1>
+      </div>
+      <br />
+
+      <div class="max-w-sm w-5/6 h-max m-8">
+        <div class="w-full h-8 relative">
+          <input
+            type="text"
+            name="name"
+            id="nameInput"
+            placeholder=" "
+            class="peer border-0 border-b-2 border-gray-500 text-base focus:ring-0 focus:outline-none focus:border-gray-500 w-full"
+          />
+          <label
+            for="nameInput"
+            class="absolute top-0 block text-gray-500 cursor-text peer-focus:-top-5 peer-focus:text-sm transition-all"
+            >Name</label
+          >
+        </div>
+
+        <div class="h-min w-full mb-8">
+          <p class="text-red-400 hidden" id="nameError">
+            Name must contain only letters and needs to be longer than 5
+            characters
+          </p>
+        </div>
+
+        <button
+          class="w-1/2 h-1/4 max-h-8 p-2 rounded-sm flex items-center justify-center font-semibold text-white bg-pastel-3 shadow-xl shadow-pastel-2 transition-all hover:shadow-pastel-2 hover:shadow-lg hover:translate-y-1 active:shadow-md active:translate-y-2 m-auto mb-5"
+          id="submit"
+        >
+          ENTER
+        </button>
+      </div>
+      <p class="absolute bottom-0 text-gray-500">*If you enter a fake name your account will be reviewed and potentionally banned</div>
+    </div>
+  </body>
+</html>

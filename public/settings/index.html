@@ -7,15 +7,65 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"></script>
     <script src="js/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/md5-js@0.0.3/md5.min.js"></script>
     <script src="js/index.js"></script>
-    <title>Login</title>
+    <title>Document</title>
   </head>
   <body>
-    <div id="revealer"></div>
-    <div class="flex items-center justify-center w-screen h-screen flex-col">
-      <h1 class="text-4xl font-bold">Login</h1>
+    <div class="w-screen h-screen flex items-center justify-center flex-col">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 absolute top-4 left-4 cursor-pointer"
+        onclick="history.pushState(null,'', '/'); location.reload()"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+        />
+      </svg>
+
+      <div id="pPWrapper">
+        <img
+          id="profilePicture"
+          src="https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+          alt="profile picture"
+          class="rounded-full h-32 w-32 border-pastel-3 border-2"
+        />
+        <input type="file" id="profilePictureInput" hidden />
+        <div
+          id="editButton"
+          class="w-8 h-8 relative -right-24 -top-10 bg-pastel-2 rounded-full p-1.5 cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-white"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div class="w-max h-min flex items-center">
+        <h1 class="text-4xl">Hello&nbsp;</h1>
+        <p id="name" class="text-4xl"></p>
+      </div>
+      <br />
+
       <div class="max-w-sm w-5/6 h-max m-8">
         <div class="w-full h-8 mb-7 relative">
           <input
@@ -32,7 +82,29 @@
           >
         </div>
 
-        <div class="w-full h-8 relative mb-2">
+        <div class="w-full h-8 relative">
+          <input
+            type="text"
+            name="name"
+            id="nameInput"
+            placeholder=" "
+            class="peer border-0 border-b-2 border-gray-500 text-base focus:ring-0 focus:outline-none focus:border-gray-500 w-full"
+          />
+          <label
+            for="nameInput"
+            class="absolute top-0 block text-gray-500 cursor-text peer-focus:-top-5 peer-focus:text-sm transition-all"
+            >Name</label
+          >
+        </div>
+
+        <div class="h-min w-full mb-8">
+          <p class="text-red-400 hidden" id="nameError">
+            Name must contain only letters and needs to be longer than 5
+            characters
+          </p>
+        </div>
+
+        <div class="w-full h-8 relative">
           <input
             type="password"
             name="password"
@@ -86,50 +158,26 @@
           </svg>
         </div>
 
-        <p class="text-gray w-full flex justify-center mb-5">OR</p>
-
-        <div class="w-full flex justify-center mb-5">
-          <button
-            type="button"
-            id="googleLogin"
-            class="shadow-xl hover:shadow-md border-2 border-gray-100 focus:border-pastel-3 flex p-2 pl-8 text-xs text-gray-500 font-semibold rounded-md bg-white bg-[left_8px_top_50%] bg-no-repeat bg-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=)] transition-all"
-          >
-            Sign in with Google
-          </button>
+        <div class="h-min w-full mb-2">
+          <p class="text-red-400 transition-all" id="passwordWarning"></p>
+          <p class="text-green-400" id="passwordSuggestion"></p>
         </div>
 
-        <div class="h-6 w-full flex items-center justify-center mb-5">
-          <a
-            href="../resetPassword/index.html"
-            class="underlineLink text-pastel-3 font-semibold"
-            id="resetPassword"
-          >
-            <span>Forgot Password</span
-            ><svg viewBox="0 0 13 20">
-              <polyline points="0.5 19.5 3 19.5 12.5 10 3 0.5" />
-            </svg>
-          </a>
-        </div>
-
+        <br />
         <button
           class="w-full h-1/4 max-h-8 p-2 rounded-sm flex items-center justify-center font-semibold text-white bg-pastel-3 shadow-xl shadow-pastel-2 transition-all hover:shadow-pastel-2 hover:shadow-lg hover:translate-y-1 active:shadow-md active:translate-y-2 m-auto mb-5"
-          id="login"
+          id="save"
         >
-          LOGIN
+          SAVE
         </button>
-
-        <div class="flex justify-center">
-          <p>Don't Have An Account?&nbsp;</p>
-          <a
-            href="../signup/index.html"
-            class="underlineLink text-pastel-3 font-semibold"
-          >
-            <span>Sign Up</span
-            ><svg viewBox="0 0 13 20">
-              <polyline points="0.5 19.5 3 19.5 12.5 10 3 0.5" />
-            </svg>
-          </a>
-        </div>
+        <br />
+        <button
+          class="w-1/2 h-1/4 max-h-8 p-2 rounded-sm flex items-center justify-center font-semibold text-white bg-pastel-3 shadow-xl shadow-pastel-2 transition-all hover:shadow-pastel-2 hover:shadow-lg hover:translate-y-1 active:shadow-md active:translate-y-2 m-auto mb-5"
+          id="login"
+          onclick="signOut()"
+        >
+          SIGN OUT
+        </button>
       </div>
     </div>
   </body>

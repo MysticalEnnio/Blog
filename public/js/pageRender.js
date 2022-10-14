@@ -1,25 +1,20 @@
-const userProfilePicture =
-  localStorage.getItem("profilePicture") ??
-  "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png";
-const userId = localStorage.getItem("id");
-const userName = localStorage.getItem("name");
-const userPassword = localStorage.getItem("password");
+let userId, userName, createdAt, userProfilePicture;
 
 function auto_grow(element) {
   element.style.height = "5px";
   element.style.height = element.scrollHeight + 2 + "px";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  (async () => {
-    if (userPassword && userId) {
+document.addEventListener("DOMContentLoaded", async () => {
+  async () => {
+    if (createdAt && userId) {
       fetch("/api/account/verifyId", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          password: userPassword,
+          createdAt: createdAt,
           id: userId,
         }),
       })
@@ -32,14 +27,31 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
     } else {
-      console.log("No password or id saved in local storage");
       window.location.href = "/login";
     }
-  })();
+  };
+
+  const userData = (await getUserData()).data.user;
+  if (!userData) {
+    window.location.href = "/login";
+  }
+  console.log(userData);
+
+  if (userData.user_metadata.avatar_url) {
+    userProfilePicture = userData.user_metadata.avatar_url;
+  } else {
+    let emailHash = md5(userData.email.toLowerCase());
+    userProfilePicture =
+      "https://www.gravatar.com/avatar/" + emailHash + "?d=mp";
+  }
+
+  userId = userData.id;
+  userName = userData.user_metadata.name;
+  createdAt = userData.created_at;
 
   document.getElementById("postHeading").textContent = postData.heading;
   document.getElementById("postDate").textContent = new Date(
-    postData.timestamp * 1
+    postData.timestamp
   ).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
@@ -98,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   3. Load all replies to comments and append them to the correct comment
   4. Load all replies to replies and place them under the correct reply
   */
-  fetch("/api/comments/get?postId=" + postData.id)
+  fetch("/api/comments/get?postId=" + postData.id.replace(/-/g, ""))
     .then((res) => res.json())
     .then((data) => {
       if (data.comments.length == 0) {
@@ -108,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
           loadComment({
             id: comment.id,
             authorName: comment.authorName,
+            author: comment.author,
             authorProfilePicture: comment.authorProfilePicture,
             comment: comment.comment,
             timestamp: new Date(comment.timestamp * 1).toLocaleDateString(
@@ -128,9 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadComment({
                   id: replyComment.id,
                   replyId: comment.id,
+                  author: replyComment.author,
                   authorName: replyComment.authorName,
                   authorProfilePicture: replyComment.authorProfilePicture,
                   comment: replyComment.comment,
+                  userProfilePicture,
                   timestamp: new Date(
                     replyComment.timestamp * 1
                   ).toLocaleDateString(undefined, {
@@ -153,9 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         replyCommentId: replyComment.id,
                         replyCommentAuthor: replyComment.authorName,
                         authorName: replyToComment.authorName,
+                        author: replyToComment.author,
                         authorProfilePicture:
                           replyToComment.authorProfilePicture,
                         comment: replyToComment.comment,
+                        userProfilePicture,
                         timestamp: new Date(
                           replyToComment.timestamp * 1
                         ).toLocaleDateString(undefined, {
@@ -194,29 +211,28 @@ function loadComment(options) {
     (e) => e == userName
   );
   //check if profile picture is set(Default: https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png)
-  if (
-    options.authorProfilePicture !=
-    "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
-  ) {
-    commentTemplate.querySelector(".profilePicture").src =
-      options.authorProfilePicture;
-  } else {
-    //check if user has a profile picture asynchronusly
-    let profilePictueRef = commentTemplate.querySelector(".profilePicture");
-    (async () => {
-      let profilePictue = profilePictueRef;
-      const res = await fetch("/api/users/get?name=" + options.authorName);
-      const data = await res.json();
-      console.log(data);
-      if (
-        data.profilePicture !=
-          "https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png" &&
-        data.profilePicture != undefined
-      ) {
-        profilePictue.src = data.profilePicture;
-      }
-    })();
-  }
+
+  commentTemplate.querySelector(".profilePicture").src =
+    options.authorProfilePicture;
+
+  //check if user has a profile picture asynchronusly
+  let profilePictueRef = commentTemplate.querySelector(".profilePicture");
+  console.log("s1");
+  (async () => {
+    console.log(options);
+    let profilePicture = profilePictueRef;
+    const res = await fetch("/api/users/get?id=" + options.author);
+    const data = await res.json();
+    console.log("data:", data);
+    if (data.user_metadata.avatar_url) {
+      profilePicture.src = data.user_metadata.avatar_url;
+      return;
+    }
+    let emailHash = md5(data.email.toLowerCase());
+    profilePicture.src =
+      "https://www.gravatar.com/avatar/" + emailHash + "?d=mp";
+  })();
+
   commentTemplate.querySelector(".newCommentWrapper .profilePicture").src =
     userProfilePicture;
   if (options.replyId) {
@@ -304,6 +320,7 @@ function sendComment() {
         loadComment({
           id: data.id,
           authorName: userName,
+          author: userId,
           timestamp: "now",
           comment: comment,
           authorProfilePicture: userProfilePicture,

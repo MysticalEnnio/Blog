@@ -137,3 +137,11 @@ html {
 *:after {
   box-sizing: inherit;
 }
+
+#passwordInput + label::after {
+  position: absolute;
+  height: 2px;
+  content: "";
+  bottom: -26px;
+  left: 0;
+}
