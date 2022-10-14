@@ -1,0 +1,5 @@
+input:not(:placeholder-shown) ~ label {
+  top: -1.25rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
