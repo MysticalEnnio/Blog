@@ -53,6 +53,7 @@ function applyStyles() {
 document.addEventListener("DOMContentLoaded", () => {
   let passwordInputEl = document.getElementById("passwordInput");
   let emailInputEl = document.getElementById("emailInput");
+  let loaderEl = document.getElementById("loader");
 
   emailInputEl.addEventListener("input", () => {
     if (emailInputEl.value.length > 0) {
@@ -96,10 +97,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (error) return;
 
+    loaderEl.classList.remove("!hidden");
     signIn(emailInputEl.value, passwordInputEl.value);
   });
 
   document.getElementById("googleLogin").addEventListener("click", () => {
+    loaderEl.classList.remove("!hidden");
     signInWithGoogle();
   });
 });

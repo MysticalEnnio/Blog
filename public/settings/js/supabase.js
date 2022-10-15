@@ -22,9 +22,12 @@ async function saveUserData(opt) {
   });
   const { data, error } = await db.auth.updateUser(options);
   if (error) {
-    console.log(error);
+    swal("Error!", error.message, "error");
   }
   if (data) {
-    console.log(data);
+    swal("Success!", "Your data has been saved.", "success");
+    if (opt.data.name) {
+      document.getElementById("name").innerHTML = opt.data.name;
+    }
   }
 }

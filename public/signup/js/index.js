@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let passwordWarning = document.getElementById("passwordWarning");
   let passwordSuggestion = document.getElementById("passwordSuggestion");
   let nameError = document.getElementById("nameError");
+  let loaderEl = document.getElementById("loader");
 
   passwordInputEl.addEventListener("input", () => {
     passwordStrength = zxcvbn(passwordInputEl.value);
@@ -179,10 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (error) return;
 
+    loaderEl.classList.remove("!hidden");
     signUp(emailInputEl.value, passwordInputEl.value, nameInputEl.value);
   });
 
   document.getElementById("googleLogin").addEventListener("click", () => {
+    loaderEl.classList.remove("!hidden");
     signUpWithGoogle();
   });
 });

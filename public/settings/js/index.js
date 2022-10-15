@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   nameInputEl.addEventListener("input", () => {
     if (nameInputEl.value.length > 0) {
-      if (validateName(nameInputEl.value) && nameInputEl.value.length > 4) {
+      if (validateName(nameInputEl.value) && nameInputEl.value.length > 2) {
         styles.set("name", `#nameInput {border-color:#22C55E;}`);
         nameError.classList.add("hidden");
         applyStyles();
@@ -227,9 +227,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (emailInputEl.value != userData.email) {
       options.email = emailInputEl.value;
       options.data.email = emailInputEl.value;
+      userData.email = emailInputEl.value;
     }
     if (nameInputEl.value != userData.user_metadata.name) {
       options.data.name = nameInputEl.value;
+      userData.user_metadata.name = nameInputEl.value;
     }
     if (Object.keys(options).length == 1) {
       if (Object.keys(options.data).length == 0) return;
