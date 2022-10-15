@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   nameInputEl.addEventListener("input", () => {
     if (nameInputEl.value.length > 0) {
-      if (validateName(nameInputEl.value) && nameInputEl.value.length > 4) {
+      if (validateName(nameInputEl.value) && nameInputEl.value.length > 2) {
         styles.set("name", `#nameInput {border-color:#22C55E;}`);
         nameError.classList.add("hidden");
         applyStyles();

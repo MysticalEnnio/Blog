@@ -7,35 +7,35 @@ const db = createClient(
 );
 
 async function signIn(email, password) {
-  const userData = await db.auth.signInWithPassword(
-    {
-      email,
-      password,
-    },
-    {
+  const userData = await db.auth.signInWithPassword({
+    email,
+    password,
+    options: {
       redirectTo: window.location.origin,
       shouldCreateUser: false,
-    }
-  );
-  if (userData.user) {
-    window.location.replace("/settings");
+    },
+  });
+  if (userData.data.user) {
+    window.location.replace("/");
   }
   if (userData.error) {
-    swal("Error!", userData.error.message, "error");
+    if (userData.error.message == "Email not confirmed") {
+      window.location.replace("/confirmEmail?email=" + email);
+    } else {
+      swal("Error!", userData.error.message, "error");
+    }
   }
 }
 
 async function signInWithGoogle() {
-  const userData = await db.auth.signInWithOAuth(
-    {
-      // provider can be 'github', 'google', 'gitlab', and more
-      provider: "google",
-    },
-    {
+  const userData = await db.auth.signInWithOAuth({
+    // provider can be 'github', 'google', 'gitlab', and more
+    provider: "google",
+    options: {
       redirectTo: window.location.origin,
       shouldCreateUser: false,
-    }
-  );
+    },
+  });
   if (userData.error != null) {
     swal("Error!", userData.error.message, "error");
   }

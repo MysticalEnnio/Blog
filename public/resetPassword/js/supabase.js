@@ -7,11 +7,11 @@ const db = createClient(
 );
 
 async function resetPassword(email) {
-  const userData = await db.auth.api.resetPasswordForEmail(email);
+  const userData = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + "/checkResetEmail/?email=" + email,
+  });
   console.log(userData);
   if (userData.error) {
     swal("Error!", userData.error.message, "error");
-  } else {
-    window.location.replace("/checkResetEmail/?email=" + email);
   }
 }

@@ -166,6 +166,20 @@ app.get("/admin", function (req, res) {
   });
 });
 
+app.get("/api/generate/recoveryLink", async function (req, res) {
+  if (!req.query.email || req.query.email == "") {
+    res.send("No email specified");
+    return;
+  }
+  console.log(req.query.email);
+  const { data, error } = await supabase.auth.api.generateLink({
+    type: "recovery",
+    email: req.query.email,
+  });
+  console.log(data);
+  res.send({ status: 200, data });
+});
+
 app.get("/api/users/get", async function (req, res) {
   if (!req.query.id) {
     res.send("No id specified");

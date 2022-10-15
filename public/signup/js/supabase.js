@@ -7,22 +7,34 @@ const db = createClient(
 );
 
 async function signUp(email, password, name) {
-  const userData = await db.auth.signUp(
-    {
-      email,
-      password,
-    },
-    {
+  const userData = await db.auth.signUp({
+    email,
+    password,
+    options: {
       data: {
         name,
+        realName: true,
       },
       shouldCreateUser: false,
-      redirectTo: window.location.origin,
-    }
-  );
+    },
+  });
   console.log(userData);
-  if (userData.user) {
-    //window.location.replace("/verify/?email=" + userData.user.email);
+  if (userData.data.user) {
+    const userData2 = await db.auth.signInWithPassword({
+      email,
+      password,
+      options: {
+        redirectTo: window.location.origin,
+        shouldCreateUser: false,
+      },
+    });
+    if (userData2.error) {
+      window.location.replace(
+        "/confirmEmail?email=" + userData.data.user.email
+      );
+    } else {
+      window.location.replace("/");
+    }
   }
   if (userData.error) {
     swal("Error!", userData.error.message, "error");
@@ -30,16 +42,14 @@ async function signUp(email, password, name) {
 }
 
 async function signUpWithGoogle() {
-  const userData = await db.auth.signInWithOAuth(
-    {
-      // provider can be 'github', 'google', 'gitlab', and more
-      provider: "google",
-    },
-    {
+  const userData = await db.auth.signInWithOAuth({
+    // provider can be 'github', 'google', 'gitlab', and more
+    provider: "google",
+    options: {
       redirectTo: window.location.origin + "/createName",
       shouldCreateUser: false,
-    }
-  );
+    },
+  });
   if (userData.error) {
     swal("Error!", userData.error.message, "error");
   }

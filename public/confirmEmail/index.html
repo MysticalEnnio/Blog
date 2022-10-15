@@ -6,15 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="js/supabase.js"></script>
     <script src="js/index.js"></script>
     <title>Verify</title>
   </head>
   <body>
     <div class="h-screen w-screen flex items-center justify-center flex-col">
-      <h1 class="text-2xl">Check your Inbox to Reset Email for&nbsp;</h1>
+      <h1 class="text-2xl">Enter code sent to&nbsp;</h1>
       <h1 id="email" class="text-2xl font-semibold"></h1>
       <br />
+      <div class="w-16 h-8 mb-7 relative">
+        <input
+          type="email"
+          name="code"
+          id="codeInput"
+          placeholder=" "
+          class="peer border-0 border-b-2 border-gray-500 text-base focus:ring-0 focus:outline-none focus:border-gray-500 w-full"
+        />
+        <label
+          for="codeInput"
+          class="absolute top-0 block text-gray-500 cursor-text peer-focus:-top-5 peer-focus:text-sm transition-all"
+          >Code</label
+        >
+      </div>
+      <button
+        class="w-2/3 max-w-xs h-1/4 max-h-8 p-2 rounded-sm flex items-center justify-center font-semibold text-white bg-pastel-3 shadow-xl shadow-pastel-2 transition-all hover:shadow-pastel-2 hover:shadow-lg hover:translate-y-1 active:shadow-md active:translate-y-2 mb-5"
+        id="submit"
+      >
+        SUBMIT
+      </button>
     </div>
   </body>
 </html>

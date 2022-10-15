@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!userData) {
     window.location.href = "/login";
   }
+  console.log(userData);
 
   function changePasswordBar() {
     passwordStrength = zxcvbn(passwordInputEl.value);

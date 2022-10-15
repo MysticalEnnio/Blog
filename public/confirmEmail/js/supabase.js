@@ -10,15 +10,15 @@ function getUserData() {
   return db.auth.getUser();
 }
 
-async function submitName(name) {
-  db.auth
-    .updateUser({
-      data: { name, realName: true },
-    })
-    .then((user) => {
-      if (user) {
-        window.location.replace("/settings");
-      }
-    })
-    .catch((err) => swal("Error!", err.message, "error"));
+async function submitCode(email, token) {
+  const { data, error } = await db.auth.verifyOtp({
+    email,
+    token,
+    type: "signup",
+  });
+  if (error) {
+    swal("Error!", error.message, "error");
+  } else if (data) {
+    window.location.replace("/");
+  }
 }
