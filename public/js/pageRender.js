@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!userData) {
     window.location.href = "/login";
   }
+  if (!userData.user_metadata.realName) {
+    window.location.href = "/createName";
+    return;
+  }
   console.log(userData);
 
   if (userData.user_metadata.avatar_url) {

@@ -16,6 +16,7 @@ async function submitName(name) {
       data: { name, realName: true },
     })
     .then((user) => {
+      console.log(user);
       if (user) {
         window.location.replace("/settings");
       }

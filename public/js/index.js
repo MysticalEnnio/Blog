@@ -129,6 +129,10 @@ $(document).ready(async () => {
     window.location.href = "/login";
     return;
   }
+  if (!userData.user_metadata.realName) {
+    window.location.href = "/createName";
+    return;
+  }
 
   const postTemplate = document.querySelector("[data-post-template]");
   const tagTemplate = document.querySelector("[data-tag-template]");
