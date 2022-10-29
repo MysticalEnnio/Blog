@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon  --exec 'postcss public/css/tailwindInput.css -o public/css/tailwind.css & node index.js'",
     "start": "node index.js",
-    "build": "postcss public/css/tailwindInput.css -o public/css/tailwind.css"
+    "buildcss": "postcss public/css/tailwindInput.css -o public/css/tailwind.css"
   },
   "repository": {
     "type": "git",
