@@ -20,20 +20,23 @@ async function signUp(email, password, name) {
   });
   console.log(userData);
   if (userData.data.user) {
+    //set id cookie
+    document.cookie = `id=${userData.data.user.id}; path=/`;
     const userData2 = await db.auth.signInWithPassword({
       email,
       password,
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: window.location.origin + "/verify",
         shouldCreateUser: false,
       },
     });
     if (userData2.error) {
+      console.log("UserData2 error", userData2);
       window.location.replace(
         "/confirmEmail?email=" + userData.data.user.email
       );
     } else {
-      window.location.replace("/");
+      window.location.replace("/verify");
     }
   }
   if (userData.error) {

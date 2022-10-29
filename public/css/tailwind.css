@@ -913,6 +913,11 @@ video {
   content: var(--tw-content);
   border-radius: 0.375rem;
 }
+.before\:bg-pastel-3::before {
+  content: var(--tw-content);
+  --tw-bg-opacity: 1;
+  background-color: rgb(61 159 221 / var(--tw-bg-opacity));
+}
 .before\:content-\[\'\'\]::before {
   --tw-content: '';
   content: var(--tw-content);

@@ -45,6 +45,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   let submitButton = document.getElementById("submit");
 
   let userData = (await getUserData()).data.user;
+  if (!userData) {
+    window.location.href = "/login";
+    return;
+  }
+  //set id cookie
+  document.cookie = `id=${userData.id}; path=/;`;
 
   nameInputEl.addEventListener("input", () => {
     if (nameInputEl.value.length > 0) {

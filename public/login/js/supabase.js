@@ -32,11 +32,10 @@ async function signInWithGoogle() {
     // provider can be 'github', 'google', 'gitlab', and more
     provider: "google",
     options: {
-      redirectTo: window.location.origin,
-      shouldCreateUser: false,
+      redirectTo: window.location.origin + "/verify",
     },
   });
-  if (userData.error != null) {
+  if (userData.error) {
     swal("Error!", userData.error.message, "error");
   }
 }

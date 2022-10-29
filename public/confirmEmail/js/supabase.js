@@ -19,6 +19,7 @@ async function submitCode(email, token) {
   if (error) {
     swal("Error!", error.message, "error");
   } else if (data) {
+    //set id cookie
     window.location.replace("/");
   }
 }

@@ -95,13 +95,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   let saveButtonEl = document.getElementById("save");
 
   let userData = (await getUserData()).data.user;
-  if (!userData) {
+  /*if (!userData) {
     window.location.href = "/login";
   }
   if (!userData.user_metadata.realName) {
     window.location.href = "/createName";
     return;
-  }
+  }*/
   console.log(userData);
 
   function changePasswordBar() {

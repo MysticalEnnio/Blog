@@ -10,13 +10,13 @@ function fetchBlogData() {
       }
     })
     .then((posts) => {
-      console.log("Posts", posts);
       if (posts == undefined) fetchBlogData();
       loadPosts(posts);
     });
 }
 
 function loadPosts(posts) {
+  console.log("Posts", posts);
   postsWrapper = document.getElementById("postsWrapper");
   postTemplate = document.getElementById("postTemplate").content;
   tagTemplate = document.getElementById("tagTemplate").content;
@@ -25,9 +25,6 @@ function loadPosts(posts) {
     postElement.querySelector(".postImage").src = post.image;
     postElement.querySelector(".postHeading").innerHTML = post.heading;
     postElement.querySelector(".postSummary").innerHTML = post.summary;
-    postElement
-      .querySelector(".postTagsWrapper")
-      .classList.add(`before:bg-[${post.vibrant}]`);
     let postTags = postElement.querySelector(".postTagsWrapper");
     post.tags.forEach((tag) => {
       let tagElement = tagTemplate.cloneNode(true).children[0];

@@ -26,6 +26,8 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+let userData = [];
+
 let db;
 //let posts = [];
 let dbConnected = false;
@@ -53,6 +55,47 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload());
 app.use(ruid());
+
+app.get(["/", "/post", "/settings"], (req, res, next) => {
+  //check cookies if user is verified
+  console.log(req.originalUrl);
+  if (!req.cookies.id) {
+    res.redirect("/login");
+    return;
+  }
+  console.log("Id", req.cookies.id);
+  //get supabase user data
+  if (userData.find((e) => e.id == req.cookies.id)?.verified) {
+    if (userData.find((e) => e.id == req.cookies.id)?.realName) {
+      next();
+      return;
+    }
+    res.redirect("/createName");
+    return;
+  }
+  supabase.auth.api
+    .getUserById(req.cookies.id)
+    .then((user) => {
+      console.log(user);
+
+      if (user.data.email_confirmed_at) {
+        if (user.data.user_metadata.realName) {
+          userData.push({ id: req.cookies.id, verified: true, realName: true });
+          next();
+          return;
+        }
+        userData.push({ id: req.cookies.id, verified: true });
+        res.redirect("/createName");
+        return;
+      }
+      res.redirect("/confirmEmail?email=" + user.data.email);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.redirect("/login");
+    });
+});
+
 app.use(express.static("public"));
 
 app.post("/api/notifications/subscribe", (req, res) => {

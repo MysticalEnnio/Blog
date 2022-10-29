@@ -18,7 +18,7 @@ async function submitName(name) {
     .then((user) => {
       console.log(user);
       if (user) {
-        window.location.replace("/settings");
+        window.location.replace("/");
       }
     })
     .catch((err) => swal("Error!", err.message, "error"));

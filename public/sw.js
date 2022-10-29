@@ -1,7 +1,8 @@
 self.addEventListener("install", (e) => {
   console.log("[Service Worker] Install");
 });
-const cacheName = "ennio-usa-blog";
+const version = "1.1.7";
+const cacheName = "ennio-usa-blog-" + version;
 const filesToCache = [
   "/",
   "/index.html",
@@ -16,6 +17,7 @@ let data;
 
 self.addEventListener("install", (e) => {
   console.log("[Service Worker] Install");
+  self.skipWaiting();
   e.waitUntil(
     (async () => {
       const cache = await caches.open(cacheName);
@@ -47,6 +49,13 @@ self.addEventListener("activate", function (e) {
 self.addEventListener("fetch", (e) => {
   e.respondWith(
     (async () => {
+      if (navigator.onLine) {
+        console.log("[Service Worker] Fetching new resources: ", e.request.url);
+        const response = await fetch(e.request);
+        const cache = await caches.open(cacheName);
+        cache.put(e.request, response.clone());
+        return response;
+      }
       const r = await caches.match(e.request);
       console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
       if (r) {
