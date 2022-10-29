@@ -1,164 +1,80 @@
-<!-- 
-Copyright © 2021 Ennio Marke
- ____    ____  ____  ____   ______   _________  
-|_   \  /   _||_  _||_  _|.' ____ \ |  _   _  | 
-  |   \/   |    \ \  / /  | (___ \_||_/ | | \_| 
-  | |\  /| |     \ \/ /    _.____`.     | |     
- _| |_\/_| |_    _|  |_   | \____) |   _| |_    
-|_____||_____|  |______|   \______.'  |_____|                                           
--->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/md5-js@0.0.3/md5.min.js"></script>
-    <script src="js/index.js"></script>
-    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="preconnect"
+      href="https://ik.imagekit.io"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/tailwind.css" />
+    <link rel="stylesheet" href="css/style.css" defer media="all" />
+    <script src="js/index.js" defer></script>
+    <title>Document</title>
   </head>
-
   <body>
-    <div id="header">
-      <h1 id="heading">Blog</h1>
-      <div id="settingsMenu">
-        <div id="settingsButtonWrapper">
-          <button id="settingsButton">
-            <svg
-              id="gearIcon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              height="24"
-              width="24"
-            >
-              <path
-                d="M495.9 166.6C499.2 175.2 496.4 184.9 489.6 191.2L446.3 230.6C447.4 238.9 448 247.4 448 256C448 264.6 447.4 273.1 446.3 281.4L489.6 320.8C496.4 327.1 499.2 336.8 495.9 345.4C491.5 357.3 486.2 368.8 480.2 379.7L475.5 387.8C468.9 398.8 461.5 409.2 453.4 419.1C447.4 426.2 437.7 428.7 428.9 425.9L373.2 408.1C359.8 418.4 344.1 427 329.2 433.6L316.7 490.7C314.7 499.7 307.7 506.1 298.5 508.5C284.7 510.8 270.5 512 255.1 512C241.5 512 227.3 510.8 213.5 508.5C204.3 506.1 197.3 499.7 195.3 490.7L182.8 433.6C167 427 152.2 418.4 138.8 408.1L83.14 425.9C74.3 428.7 64.55 426.2 58.63 419.1C50.52 409.2 43.12 398.8 36.52 387.8L31.84 379.7C25.77 368.8 20.49 357.3 16.06 345.4C12.82 336.8 15.55 327.1 22.41 320.8L65.67 281.4C64.57 273.1 64 264.6 64 256C64 247.4 64.57 238.9 65.67 230.6L22.41 191.2C15.55 184.9 12.82 175.3 16.06 166.6C20.49 154.7 25.78 143.2 31.84 132.3L36.51 124.2C43.12 113.2 50.52 102.8 58.63 92.95C64.55 85.8 74.3 83.32 83.14 86.14L138.8 103.9C152.2 93.56 167 84.96 182.8 78.43L195.3 21.33C197.3 12.25 204.3 5.04 213.5 3.51C227.3 1.201 241.5 0 256 0C270.5 0 284.7 1.201 298.5 3.51C307.7 5.04 314.7 12.25 316.7 21.33L329.2 78.43C344.1 84.96 359.8 93.56 373.2 103.9L428.9 86.14C437.7 83.32 447.4 85.8 453.4 92.95C461.5 102.8 468.9 113.2 475.5 124.2L480.2 132.3C486.2 143.2 491.5 154.7 495.9 166.6V166.6zM256 336C300.2 336 336 300.2 336 255.1C336 211.8 300.2 175.1 256 175.1C211.8 175.1 176 211.8 176 255.1C176 300.2 211.8 336 256 336z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div id="settings">
-          <div id="profilePictureWrapper">
-            <input
-              id="profilePicture"
-              type="image"
-              src="https://ik.imagekit.io/mystical/Default_Pb_vXykZsFHE.png"
-            />
-            <input type="file" id="profilePictureInput" />
-          </div>
-          <div id="settingsButtonWrapper">
-            <p id="settingsButton" onclick="goToSettings()">settings</p>
-          </div>
-          <div class="sl-nav" onclick="">
-            Language:
-            <ul>
-              <li onclick="window.location.href = '/admin'">
-                <b>Deutsch</b>
-                <i class="fa fa-angle-down" aria-hidden="true"></i>
-                <div class="triangle"></div>
-                <ul>
-                  <li>
-                    <i class="sl-flag flag-de">
-                      <div id="germany"></div>
-                    </i>
-                    <span language="de">Deutsch</span>
-                  </li>
-                  <li>
-                    <i class="sl-flag flag-usa">
-                      <div id="england"></div>
-                    </i>
-                    <span language="en">English</span>
-                  </li>
-                  <li>
-                    <i class="sl-flag flag-es">
-                      <div id="spain"></div>
-                    </i>
-                    <span language="es">Español</span>
-                  </li>
-                  <li>
-                    <i class="sl-flag flag-ru">
-                      <div id="russia"></div>
-                    </i>
-                    <span language="ru">Русский</span>
-                  </li>
-                  <li>
-                    <i class="sl-flag flag-cn">
-                      <div id="china"></div>
-                    </i>
-                    <span language="zh">中文</span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <p
-            id="logout"
-            onclick="localStorage.clear(); window.location.href = '/login'"
-          >
-            logout
-          </p>
-        </div>
-      </div>
-    </div>
-    <div id="searchWrapper">
-      <label for="search"
-        ><strong style="font-size: 3vmin">Search</strong></label
+    <div id="header" class="p-[4vmin] flex justify-between">
+      <img
+        src="https://ik.imagekit.io/mystical/Usa-Stamp_kZkB6oCZi.png"
+        class="h-[15vmin] w-auto"
+        alt="Blog Logo"
+        width="77px"
+        height="85px"
+      />
+      <h1 class="text-[7vmin] font-serif font-extrabold text-white">Blog</h1>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-[4vmin] h-[4vmin] text-white cursor-pointer"
+        onclick="window.location.href = '/settings'"
       >
-      <br />
-      <input type="search" id="search" data-search />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"
+        />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </svg>
     </div>
-    <div id="tagsWrapper"></div>
-    <template data-tag-template>
-      <div class="tag">
-        <span class="tag-name" data-tag-name></span>
-        <div class="tag-count" data-tag-count></div>
-      </div>
-    </template>
-    <template data-post-template>
-      <div class="post">
-        <h1 class="post-heading" data-heading>
-          <a href="" style="color: var(--heading-color)"></a>
-        </h1>
-        <p class="post-date" data-date></p>
-        <div class="post-tags" data-tags></div>
-        <div class="post-preview" data-preview></div>
-        <a class="post-more" href="" data-more>Read more</a>
-      </div>
-    </template>
-    <div id="posts">
-      <div id="loader">
-        <div class="lds-spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+    <div id="postsWrapper" class="w-[100vmin] m-auto p-8"></div>
+    <template id="postTemplate">
+      <div
+        class="post cursor-pointer rounded-md m-auto mb-[5vmin] vertical:grid vertical:grid-cols-3 vertical:grid-rows-2 vertical:h-[25vh] h-min vertical:w-auto w-2/3 flex flex-col items-center shadow-2xl bg-white"
+      >
+        <img
+          alt="Post Cover Image"
+          crossorigin="anonymous"
+          class="postImage vertical:row-span-2 aspect-square object-cover object-center vertical:h-[101%] vertical:w-full w-full vertical:rounded-l-md vertical:rounded-tr-none rounded-t-md"
+        />
+        <div
+          class="postHeader text-pastel-1 vertical:ml-4 w-5/6 vertical:w-max m-auto pt-4 vertical:pt-2 col-span-2 mb-4"
+        >
+          <h1 class="postHeading text-[4vmin] font-serif"></h1>
+          <div
+            class="postTagsWrapper flex text-[2vmin] font-mono text-white relative before:content-[''] before:absolute before:w-[6vmin] before:h-[0.5vmin] before:rounded-md before:bottom-0 before:translate-y-[2vmin]"
+          ></div>
         </div>
+
+        <p
+          class="postSummary text-pastel-1 vertical:ml-4 w-5/6 my-[2vmin] col-span-2 text-[2vmin]"
+        ></p>
       </div>
-    </div>
+    </template>
+    <template id="tagTemplate">
+      <p
+        class="postTag odd:bg-pastel-3 even:bg-pastel-7 rounded-md w-min h-min p-[1vmin] px-[2vmin] mr-[2vmin]"
+      >
+        travel
+      </p>
+    </template>
   </body>
 </html>
-
-<!--                                       
-       :\     /;               _
-      ;  \___/  ;             ; ;
-     ,:-"'   `"-:.            / ;
-    /,---.   ,---.\         _; /
-   ((  |  ) (  |  ))    ,-""_,"
-    \`````   `````/""""",-""
-     '-.._ v _..-'      )
-       / ___   ____,..  \
-      / /   | |   | ( \. \
-     / /    | |    | |  \ \
-     `"     `"     `"    `"
--->
