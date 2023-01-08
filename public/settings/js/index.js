@@ -205,9 +205,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       options.data.email = emailInputEl.value;
       userData.email = emailInputEl.value;
     }
-    if (nameInputEl.value != userData.user_metadata.name) {
-      options.data.name = nameInputEl.value;
-      userData.user_metadata.name = nameInputEl.value;
+    if (nameInputEl.value != userData.user_metadata.realName) {
+      options.data.realName = nameInputEl.value;
+      userData.user_metadata.realName = nameInputEl.value;
     }
     if (Object.keys(options).length == 1) {
       if (Object.keys(options.data).length == 0) return;
@@ -216,10 +216,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     saveUserData(options);
   });
 
-  document.getElementById("name").innerHTML = userData.user_metadata.name;
+  document.getElementById("name").innerHTML = userData.user_metadata.realName;
   emailInputEl.value = userData.email;
   styles.set("email", `#emailInput {border-color:#22C55E;}`);
-  nameInputEl.value = userData.user_metadata.name;
+  nameInputEl.value = userData.user_metadata.realName;
   styles.set("name", `#nameInput {border-color:#22C55E;}`);
   applyStyles();
 

@@ -10,10 +10,10 @@ function getUserData() {
   return db.auth.getUser();
 }
 
-async function submitName(name) {
+async function submitName(realName) {
   db.auth
     .updateUser({
-      data: { name, realName: true },
+      data: { name: realName, realName },
     })
     .then((user) => {
       console.log(user);

@@ -26,8 +26,8 @@ async function saveUserData(opt) {
   }
   if (data) {
     swal("Success!", "Your data has been saved.", "success");
-    if (opt.data.name) {
-      document.getElementById("name").innerHTML = opt.data.name;
+    if (opt.data.realName) {
+      document.getElementById("name").innerHTML = opt.data.realName;
     }
   }
 }
